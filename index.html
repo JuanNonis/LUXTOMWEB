@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUXTOM — Veladores de Diseño</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ─── NAVBAR ─────────────────────────────────── -->
+<nav class="nav">
+  <a href="index.html" class="nav__logo">LUXTOM</a>
+
+  <ul class="nav__links" id="navLinks">
+    <li><a href="index.html" class="active">Inicio</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+    <li><a href="shop.html" class="nav__cta">Ver colección</a></li>
+  </ul>
+
+  <button class="nav__burger" id="burger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+
+<!-- ─── HERO ───────────────────────────────────── -->
+<section class="hero">
+  <div class="hero__bg"></div>
+  <div class="hero__glow"></div>
+
+  <div class="hero__content">
+    <span class="hero__eyebrow">✦ Iluminación de diseño exclusivo</span>
+    <h1 class="hero__title">
+      Luz que<br>
+      <em>transforma</em><br>
+      espacios
+    </h1>
+    <p class="hero__subtitle">
+      Veladores artesanales que fusionan estética y función. Cada pieza diseñada para crear atmósferas únicas en tu hogar.
+    </p>
+    <div class="hero__actions">
+      <a href="shop.html" class="btn-primary">
+        Ver colección &rarr;
+      </a>
+      <a href="#sobre-nosotros" class="btn-ghost">
+        Nuestra historia
+      </a>
+    </div>
+  </div>
+
+  <div class="hero__visual">
+    <div class="lamp-hero">
+      <div class="lamp-hero__glow-ring"></div>
+      <div class="lamp-hero__body">
+        <div class="lamp-hero__shade"></div>
+        <div class="lamp-hero__neck"></div>
+        <div class="lamp-hero__base"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── BRAND STRIP ────────────────────────────── -->
+<div class="brand-strip">
+  <div class="brand-strip__stats">
+    <div class="stat">
+      <div class="stat__num">+200</div>
+      <div class="stat__label">Clientes felices</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num">18</div>
+      <div class="stat__label">Modelos únicos</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num">100%</div>
+      <div class="stat__label">Diseño propio</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num">2</div>
+      <div class="stat__label">Años de experiencia</div>
+    </div>
+  </div>
+  <a href="shop.html" class="btn-ghost">Explorar todo</a>
+</div>
+
+
+<!-- ─── FEATURED PRODUCTS ─────────────────────── -->
+<section class="featured">
+  <div class="featured__header">
+    <div>
+      <span class="section-label">✦ Destacados</span>
+      <h2 class="section-title">Nuestros favoritos</h2>
+      <p class="section-sub">Piezas seleccionadas que combinan diseño y calidez lumínica.</p>
+    </div>
+    <a href="shop.html" class="btn-ghost">Ver todos &rarr;</a>
+  </div>
+
+  <div class="products-grid" id="featuredGrid"></div>
+</section>
+
+
+<!-- ─── AMBIENT / QUOTE ────────────────────────── -->
+<section class="ambient" id="sobre-nosotros">
+  <div class="ambient__bg-glow"></div>
+  <div class="ambient__inner">
+    <span class="section-label" style="display:block;margin-bottom:20px;">✦ Nuestra filosofía</span>
+    <p class="ambient__quote">
+      "La iluminación correcta no alumbra<br>
+      una habitación — <em>la define</em>."
+    </p>
+    <p class="ambient__sub">
+      En LUXTOM creemos que cada espacio merece una luz diseñada con intención. Nuestros veladores son piezas pensadas para acompañar momentos, no solo iluminarlos.
+    </p>
+    <a href="shop.html" class="btn-primary">Descubrí la colección &rarr;</a>
+  </div>
+</section>
+
+
+<!-- ─── FOOTER ─────────────────────────────────── -->
+<footer class="footer" id="contacto">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <a href="index.html" class="nav__logo">LUXTOM</a>
+      <p>Veladores de diseño exclusivo. Cada pieza pensada para transformar tu espacio con luz y estilo.</p>
+    </div>
+    <div class="footer__col">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="#sobre-nosotros">Nosotros</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <h4>Contacto</h4>
+      <ul>
+        <li><a href="#">WhatsApp</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <p>&copy; 2025 LUXTOM. Todos los derechos reservados.</p>
+    <p style="color: var(--muted); font-size:11px; letter-spacing:0.08em;">DISEÑO · LUZ · AMBIENTE</p>
+  </div>
+</footer>
+
+
+<script src="productos.js"></script>
+<script>
+  document.getElementById('burger').addEventListener('click', () =>
+    document.getElementById('navLinks').classList.toggle('open'));
+
+  const featuredGrid = document.getElementById('featuredGrid');
+  const featured = Object.entries(PRODUCTOS).filter(([, p]) => p.featured);
+  featuredGrid.innerHTML = featured.map(([id, p]) => renderCard(id, p)).join('');
+</script>
+</body>
+</html>

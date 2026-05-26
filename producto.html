@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Producto — LUXTOM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ─── NAVBAR ─────────────────────────────────── -->
+<nav class="nav">
+  <a href="index.html" class="nav__logo">LUXTOM</a>
+  <ul class="nav__links" id="navLinks">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="index.html#contacto">Contacto</a></li>
+    <li><a href="shop.html" class="nav__cta">Ver colección</a></li>
+  </ul>
+  <button class="nav__burger" id="burger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ─── BREADCRUMB ──────────────────────────────── -->
+<div class="breadcrumb">
+  <a href="shop.html">&#8592; Volver al Shop</a>
+</div>
+
+<!-- ─── PRODUCTO ────────────────────────────────── -->
+<section class="product-detail">
+  <div class="product-detail__grid">
+
+    <!-- GALERÍA -->
+    <div class="product-gallery">
+      <div class="product-gallery__main" id="js-gallery-main"></div>
+      <div class="product-gallery__thumbs" id="js-gallery-thumbs"></div>
+    </div>
+
+    <!-- INFO -->
+    <div class="product-info">
+      <span id="js-badge" class="product-card__badge product-info__badge"></span>
+      <h1 class="product-info__name" id="js-nombre"></h1>
+      <p class="product-info__tagline" id="js-tagline"></p>
+
+      <div class="product-info__price-block" id="js-precio-block"></div>
+
+      <p class="product-info__desc" id="js-desc-corta"></p>
+
+      <ul class="product-info__specs" id="js-specs"></ul>
+
+      <div class="product-info__actions" id="js-actions"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── VIDEO ─────────────────────────────────────── -->
+<section class="product-video-section">
+  <div class="product-video-section__inner">
+    <span class="section-label">✦ En movimiento</span>
+    <h2 class="section-title" style="margin-bottom:36px;">Miralo en acción</h2>
+    <div class="product-video__wrapper" id="js-video"></div>
+  </div>
+</section>
+
+<!-- ─── DESCRIPCIÓN COMPLETA ─────────────────────── -->
+<section class="product-full-desc">
+  <div class="product-full-desc__inner">
+    <span class="section-label">✦ Sobre este velador</span>
+    <h2 class="section-title">Cada detalle, pensado</h2>
+    <p class="product-full-desc__body" id="js-desc-larga"></p>
+    <div class="product-features" id="js-features"></div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─────────────────────────────────────── -->
+<footer class="footer" id="contacto">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <a href="index.html" class="nav__logo">LUXTOM</a>
+      <p>Veladores de diseño exclusivo. Cada pieza pensada para transformar tu espacio con luz y estilo.</p>
+    </div>
+    <div class="footer__col">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="index.html#sobre-nosotros">Nosotros</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <h4>Contacto</h4>
+      <ul>
+        <li><a href="#">WhatsApp</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <p>&copy; 2025 LUXTOM. Todos los derechos reservados.</p>
+    <p style="color: var(--muted); font-size:11px; letter-spacing:0.08em;">DISEÑO · LUZ · AMBIENTE</p>
+  </div>
+</footer>
+
+
+
+<script src="productos.js"></script>
+<script>
+
+// ── Helpers ──────────────────────────────────────────────
+function lampHTML(clase, w, h) {
+  return `<div class="gallery-placeholder ${clase}">
+    <div class="lamp-thumb" style="width:${w};height:${h};">
+      <div class="lamp-thumb__glow"></div>
+      <div class="lamp-thumb__shade"></div>
+      <div class="lamp-thumb__neck"></div>
+      <div class="lamp-thumb__base"></div>
+    </div>
+  </div>`;
+}
+
+// ── Render ────────────────────────────────────────────────
+function renderProducto(p) {
+  // Título de la pestaña
+  document.title = p.nombre + ' — LUXTOM';
+
+  // Badge
+  const badgeEl = document.getElementById('js-badge');
+  if (p.badge) {
+    badgeEl.textContent = p.badge.texto;
+    badgeEl.classList.add(p.badge.clase);
+  } else {
+    badgeEl.style.display = 'none';
+  }
+
+  // Nombre y tagline
+  document.getElementById('js-nombre').textContent  = p.nombre;
+  document.getElementById('js-tagline').textContent = p.tagline;
+
+  // Precio
+  const precioBlock = document.getElementById('js-precio-block');
+  let precioHTML = '';
+  if (p.descuento && p.precioDescuento) {
+    precioHTML = `<span class="product-info__price-old">${p.precio}</span>
+                  <span class="product-info__price">${p.precioDescuento}</span>`;
+  } else {
+    precioHTML = `<span class="product-info__price">${p.precio}</span>`;
+  }
+  if (p.stock) {
+    precioHTML += `<span class="product-info__stock stock-ok">&#10003; Disponible</span>`;
+  }
+  precioBlock.innerHTML = precioHTML;
+
+  // Descripción corta
+  document.getElementById('js-desc-corta').textContent = p.descCorta;
+
+  // Specs
+  const specsEl = document.getElementById('js-specs');
+  specsEl.innerHTML = p.specs.map(([label, val]) =>
+    `<li><span>${label}</span><span>${val}</span></li>`
+  ).join('');
+
+  // Acciones
+  const msg = encodeURIComponent(p.whatsapp);
+  document.getElementById('js-actions').innerHTML = `
+    <a href="https://wa.me/TUNUMERO?text=${msg}"
+       class="btn-primary" target="_blank" rel="noopener">
+      Consultar por WhatsApp
+    </a>
+    <a href="shop.html" class="btn-ghost">Ver más</a>`;
+
+  // Galería — imágenes reales o placeholder CSS
+  const mainEl   = document.getElementById('js-gallery-main');
+  const thumbsEl = document.getElementById('js-gallery-thumbs');
+
+  if (p.imagenes && p.imagenes.length > 0) {
+    // Con imágenes reales
+    mainEl.innerHTML = `
+      <img id="main-img" src="${p.imagenes[0]}" alt="${p.nombre}"
+        style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+      ${p.badge ? `<span class="product-card__badge ${p.badge.clase}">${p.badge.texto}</span>` : ''}`;
+
+    thumbsEl.innerHTML = p.imagenes.slice(0, 4).map((src, i) => `
+      <div class="gallery-thumb ${i === 0 ? 'active' : ''}" data-src="${src}">
+        <img src="${src}" alt="${p.nombre} ${i + 1}"
+          style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+      </div>`).join('');
+
+    // Swap de imagen principal al hacer click
+    thumbsEl.querySelectorAll('.gallery-thumb').forEach(thumb => {
+      thumb.addEventListener('click', () => {
+        thumbsEl.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+        document.getElementById('main-img').src = thumb.dataset.src;
+      });
+    });
+
+  } else {
+    // Sin imágenes — placeholder CSS
+    const brightnesses = ['', 'filter:brightness(.65)', 'filter:brightness(.4)'];
+    mainEl.innerHTML =
+      lampHTML(p.lampClase, '44%', '72%') +
+      (p.badge ? `<span class="product-card__badge ${p.badge.clase}">${p.badge.texto}</span>` : '');
+
+    thumbsEl.innerHTML = [0, 1, 2].map(i => `
+      <div class="gallery-thumb ${i === 0 ? 'active' : ''}" data-index="${i}">
+        <div class="gallery-placeholder ${p.lampClase}" style="${brightnesses[i]}">
+          <div class="lamp-thumb" style="width:54%;height:72%;">
+            <div class="lamp-thumb__glow"></div>
+            <div class="lamp-thumb__shade"></div>
+            <div class="lamp-thumb__neck"></div>
+            <div class="lamp-thumb__base"></div>
+          </div>
+        </div>
+      </div>`).join('');
+
+    thumbsEl.querySelectorAll('.gallery-thumb').forEach(thumb => {
+      thumb.addEventListener('click', () => {
+        thumbsEl.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+        thumb.classList.add('active');
+      });
+    });
+  }
+
+  // Video
+  const videoEl = document.getElementById('js-video');
+  if (!p.video) {
+    videoEl.innerHTML = `
+      <div class="product-video__placeholder">
+        <div class="product-video__play-icon"></div>
+        <p class="product-video__placeholder-title">Próximamente</p>
+        <p class="product-video__placeholder-sub">Agregá un video de YouTube o un archivo .mp4</p>
+      </div>`;
+
+  } else if (p.video.tipo === 'youtube') {
+    // Muestra la miniatura automática de YouTube; carga el iframe recién al hacer click
+    const ytId = p.video.id;
+    videoEl.innerHTML = `
+      <div class="youtube-facade" data-id="${ytId}">
+        <img src="https://img.youtube.com/vi/${ytId}/maxresdefault.jpg"
+             alt="${p.nombre}"
+             onerror="this.src='https://img.youtube.com/vi/${ytId}/hqdefault.jpg'">
+        <button class="youtube-facade__play" aria-label="Reproducir video">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </button>
+      </div>`;
+
+    videoEl.querySelector('.youtube-facade').addEventListener('click', () => {
+      videoEl.innerHTML = `<iframe
+        src="https://www.youtube.com/embed/${ytId}?autoplay=1"
+        title="${p.nombre}" frameborder="0"
+        allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    });
+
+  } else if (p.video.tipo === 'local') {
+    // Crea el video y salta al segundo 1 para mostrar un fotograma como preview automático
+    const vid = document.createElement('video');
+    vid.controls = true;
+    vid.preload = 'metadata';
+
+    const source = document.createElement('source');
+    source.src = p.video.src;
+    source.type = 'video/mp4';
+    vid.appendChild(source);
+
+    vid.addEventListener('loadedmetadata', () => {
+      vid.currentTime = 1;
+    });
+
+    videoEl.appendChild(vid);
+  }
+
+  // Descripción larga
+  document.getElementById('js-desc-larga').innerHTML = p.descLarga;
+
+  // Features
+  document.getElementById('js-features').innerHTML = p.features.map(f => `
+    <div class="product-feature-card">
+      <span class="product-feature-card__icon">${f.icon}</span>
+      <div class="product-feature-card__title">${f.titulo}</div>
+      <div class="product-feature-card__text">${f.texto}</div>
+    </div>`).join('');
+}
+
+// ── Init ──────────────────────────────────────────────────
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id');
+const producto = PRODUCTOS[id];
+
+if (!producto) {
+  // ID inválido → volver al shop
+  window.location.href = 'shop.html';
+} else {
+  renderProducto(producto);
+}
+
+// Burger menu
+document.getElementById('burger')
+  .addEventListener('click', () =>
+    document.getElementById('navLinks').classList.toggle('open'));
+</script>
+</body>
+</html>

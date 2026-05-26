@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop — LUXTOM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ─── NAVBAR ─────────────────────────────────── -->
+<nav class="nav">
+  <a href="index.html" class="nav__logo">LUXTOM</a>
+
+  <ul class="nav__links" id="navLinks">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="index.html#contacto">Contacto</a></li>
+    <li><a href="shop.html" class="nav__cta">Ver colección</a></li>
+  </ul>
+
+  <button class="nav__burger" id="burger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+
+<!-- ─── PAGE HERO ──────────────────────────────── -->
+<div class="page-hero">
+  <div class="page-hero__inner">
+    <span class="section-label">✦ Tienda completa</span>
+    <h1 class="section-title" style="font-size: clamp(2.2rem,5vw,3.8rem);">Toda la<br>colección</h1>
+    <p class="section-sub">
+      Explorá cada velador de nuestra línea. Diseños únicos para cada espacio y estilo de vida.
+    </p>
+  </div>
+</div>
+
+
+<!-- ─── FILTERS ────────────────────────────────── -->
+<div class="shop-filters">
+  <button class="filter-btn active" data-filter="all">Todos</button>
+  <button class="filter-btn" data-filter="mesa">De mesa</button>
+  <button class="filter-btn" data-filter="pie">De pie</button>
+  <button class="filter-btn" data-filter="pared">De pared</button>
+  <button class="filter-btn" data-filter="oferta">Ofertas</button>
+</div>
+
+
+<!-- ─── SHOP GRID ──────────────────────────────── -->
+<main class="shop-main">
+  <div class="products-grid" id="shopGrid"></div>
+
+  <!-- empty state -->
+  <p id="emptyMsg" style="display:none; text-align:center; padding:60px 20px; color:var(--muted); font-size:15px;">
+    No hay productos en esta categoría.
+  </p>
+</main>
+
+
+<!-- ─── FOOTER ─────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <a href="index.html" class="nav__logo">LUXTOM</a>
+      <p>Veladores de diseño exclusivo. Cada pieza pensada para transformar tu espacio con luz y estilo.</p>
+    </div>
+    <div class="footer__col">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="index.html#sobre-nosotros">Nosotros</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <h4>Contacto</h4>
+      <ul>
+        <li><a href="#">WhatsApp</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <p>&copy; 2025 LUXTOM. Todos los derechos reservados.</p>
+    <p style="color: var(--muted); font-size:11px; letter-spacing:0.08em;">DISEÑO · LUZ · AMBIENTE</p>
+  </div>
+</footer>
+
+
+<script src="productos.js"></script>
+<script>
+  document.getElementById('burger').addEventListener('click', () =>
+    document.getElementById('navLinks').classList.toggle('open'));
+
+  const grid = document.getElementById('shopGrid');
+  grid.innerHTML = Object.entries(PRODUCTOS).map(([id, p]) => renderCard(id, p)).join('');
+
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const emptyMsg   = document.getElementById('emptyMsg');
+
+  function applyFilter(f) {
+    const cards = grid.querySelectorAll('.product-card');
+    let visible = 0;
+    cards.forEach(card => {
+      const cats = (card.dataset.cat || '').split(' ');
+      const show = f === 'all' || cats.includes(f);
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    emptyMsg.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilter(btn.dataset.filter);
+    });
+  });
+</script>
+</body>
+</html>

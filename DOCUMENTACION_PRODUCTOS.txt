@@ -1,0 +1,243 @@
+================================================================
+  GUIA PARA AGREGAR Y MODIFICAR PRODUCTOS — LUXTOM
+================================================================
+
+Todos los productos se administran desde un unico archivo: productos.js
+
+No hay que tocar shop.html ni producto.html — esas paginas se
+generan solas a partir de los datos de productos.js.
+
+
+================================================================
+  ESTRUCTURA DE UN PRODUCTO
+================================================================
+
+Cada producto es una entrada dentro del objeto PRODUCTOS.
+La CLAVE (ej. "TOM", "rosa-noche") es el ID interno: aparece en
+la URL como   producto.html?id=TOM
+
+Ejemplo de producto completo:
+
+  "ID-DEL-PRODUCTO": {
+    nombre:          "Velador TOM",
+    tagline:         "minimalista · luz LED · 20 cm",
+    precio:          "$20.000",
+    descuento:       false,
+    precioDescuento: null,
+    badge:           { texto: "Nuevo", clase: "badge--new" },
+    featured:        true,
+    categoria:       "mesa",
+    lampClase:       "lamp--warm",
+    stock:           true,
+    descCorta:       "Texto corto que aparece en la tarjeta del shop.",
+    specs: [
+      ["Altura",      "20 cm"],
+      ["Tipo de luz", "LED"],
+    ],
+    whatsapp:  "Hola! Me interesa el Velador TOM 💡",
+    video:     null,
+    descLarga: "Descripcion completa. Acepta HTML.",
+    features: [
+      { icon: "☀", titulo: "Luz calida", texto: "2700 K para ambientes intimos." },
+    ],
+    imagenes: ["foto1.jpg", "foto2.jpg"],
+  },
+
+
+================================================================
+  CAMPOS EXPLICADOS
+================================================================
+
+  nombre          → Nombre completo del producto
+  tagline         → Subtitulo corto (aparece bajo el nombre)
+  precio          → Precio normal, ej. "$20.000"
+  descuento       → true / false. Si es true, el precio normal se tacha
+  precioDescuento → Precio con descuento. Solo se muestra si descuento: true
+  badge           → Etiqueta sobre la imagen (ver opciones abajo)
+  featured        → true / false. Si es true aparece en "Nuestros favoritos"
+  categoria       → Filtro del Shop (ver opciones abajo)
+  lampClase       → Color del velador placeholder cuando no hay foto
+  stock           → true / false. Si es true muestra "Disponible"
+  descCorta       → Descripcion breve (aparece en pagina de detalle)
+  specs           → Especificaciones tecnicas (tabla en pagina de detalle)
+  whatsapp        → Mensaje pre-cargado en el boton de WhatsApp
+  video           → Video del producto (ver opciones abajo)
+  descLarga       → Descripcion completa en la pagina de detalle
+  features        → Tarjetas de caracteristicas en la pagina de detalle
+  imagenes        → Rutas a las fotos del producto
+
+
+================================================================
+  VALORES POSIBLES POR CAMPO
+================================================================
+
+--- badge (etiqueta sobre la imagen) ---
+
+  badge: { texto: "Nuevo",      clase: "badge--new"  }  → azul
+  badge: { texto: "Top ventas", clase: "badge--hot"  }  → naranja
+  badge: { texto: "Oferta",     clase: "badge--sale" }  → rojo
+  badge: null                                            → sin etiqueta
+
+
+--- categoria (filtros del Shop) ---
+
+  categoria: "mesa"   → Veladores de mesa
+  categoria: "pie"    → Lamparas de pie
+  categoria: "pared"  → Apliques de pared
+
+  NOTA: Los productos con descuento: true se agregan automaticamente
+  al filtro Ofertas. No hace falta ningun campo extra.
+
+
+--- lampClase (color del placeholder cuando no hay fotos) ---
+
+  lampClase: "lamp--warm"     → amarillo calido
+  lampClase: "lamp--neutral"  → blanco neutro
+  lampClase: "lamp--cool"     → azul frio
+  lampClase: "lamp--rose"     → rosa
+  lampClase: "lamp--amber"    → ambar / naranja
+  lampClase: "lamp--white"    → blanco puro
+
+
+--- video ---
+
+  video: null
+    → Muestra cartel "Proximamente"
+
+  video: { tipo: "youtube", id: "dQw4w9WgXcQ" }
+    → Video de YouTube (el ID es la parte final de la URL:
+      youtube.com/watch?v=dQw4w9WgXcQ)
+
+  video: { tipo: "local", src: "videos/mi-video.mp4", poster: "portada.jpg" }
+    → Archivo de video local
+
+
+--- imagenes ---
+
+  imagenes: []
+    → Sin fotos. Muestra placeholder con animacion CSS.
+
+  imagenes: ["IMG_0029.jpeg"]
+    → Una sola foto.
+
+  imagenes: ["foto1.jpg", "foto2.jpg", "foto3.jpg"]
+    → Multiples fotos (maximo 4 se muestran en la galeria).
+
+  IMPORTANTE:
+  - La PRIMERA imagen es la portada en las tarjetas del Shop.
+  - Las fotos deben estar en la misma carpeta que productos.js,
+    o indicar la ruta relativa (ej. "imagenes/foto1.jpg").
+
+
+================================================================
+  COMO AGREGAR UN PRODUCTO NUEVO
+================================================================
+
+  1. Abrir productos.js
+  2. Copiar el bloque de cualquier producto existente
+  3. Pegarlo antes del ultimo };  (la llave que cierra PRODUCTOS)
+  4. Cambiar la CLAVE ID — debe ser unica, sin espacios, puede
+     usar guiones. Ejemplo: "velador-nube"
+  5. Completar todos los campos con los datos del nuevo producto
+  6. Si tiene fotos, copiar los archivos a la carpeta del proyecto
+     y listarlos en imagenes
+
+
+Ejemplo minimo de producto nuevo:
+
+  "velador-nube": {
+    nombre:          "Velador Nube",
+    tagline:         "Luz difusa · Diseño organico · 25 cm",
+    precio:          "$18.500",
+    descuento:       false,
+    precioDescuento: null,
+    badge:           { texto: "Nuevo", clase: "badge--new" },
+    featured:        false,
+    categoria:       "mesa",
+    lampClase:       "lamp--neutral",
+    stock:           true,
+    descCorta:       "Un velador con forma organica que difunde la luz suavemente.",
+    specs: [
+      ["Altura",      "25 cm"],
+      ["Tipo de luz", "Neutra (3000 K)"],
+      ["Material",    "PLA impreso en 3D"],
+      ["Casquillo",   "E27"],
+    ],
+    whatsapp:  "Hola! Me interesa el Velador Nube 💡",
+    video:     null,
+    descLarga: "Descripcion larga del Velador Nube...",
+    features: [
+      { icon: "☁", titulo: "Forma organica", texto: "Diseño inspirado en las nubes." },
+      { icon: "☀", titulo: "Luz difusa",     texto: "3000 K para ambientes tranquilos." },
+    ],
+    imagenes: [],
+  },
+
+
+================================================================
+  COMO MODIFICAR UN PRODUCTO EXISTENTE
+================================================================
+
+  1. Abrir productos.js
+  2. Buscar el producto por su ID (ej. "TOM", "rosa-noche")
+  3. Editar el campo que necesitas cambiar
+  4. Guardar el archivo
+
+
+--- Cambios frecuentes ---
+
+CAMBIAR EL PRECIO:
+  precio: "$22.000",
+
+ACTIVAR DESCUENTO:
+  precio:          "$21.000",    ← precio tachado
+  descuento:       true,
+  precioDescuento: "$17.400",   ← precio real
+  badge:           { texto: "Oferta", clase: "badge--sale" },
+
+QUITAR DESCUENTO:
+  descuento:       false,
+  precioDescuento: null,
+  badge:           null,
+
+AGREGAR FOTOS:
+  imagenes: ["foto-nueva-1.jpg", "foto-nueva-2.jpg"],
+
+MARCAR SIN STOCK:
+  stock: false,
+
+AGREGAR VIDEO DE YOUTUBE:
+  video: { tipo: "youtube", id: "XXXXXXXXXXX" },
+  (El ID es la parte final de la URL: youtube.com/watch?v=XXXXXXXXXXX)
+
+DESTACAR EN EL INICIO (home):
+  featured: true,
+
+
+================================================================
+  COMO FUNCIONA LA URL DE CADA PRODUCTO
+================================================================
+
+La URL del detalle se arma automaticamente:
+
+  producto.html?id=TOM
+  producto.html?id=rosa-noche
+  producto.html?id=velador-nube
+
+La parte despues de "id=" es la CLAVE del objeto en productos.js.
+Si cambias la clave, la URL cambia tambien.
+
+
+================================================================
+  CHECKLIST AL AGREGAR UN PRODUCTO NUEVO
+================================================================
+
+  [ ] La clave ID es unica y no tiene espacios
+  [ ] precio tiene el formato "$XX.XXX"
+  [ ] Si tiene descuento, descuento: true y precioDescuento completos
+  [ ] categoria es "mesa", "pie" o "pared"
+  [ ] whatsapp menciona el nombre del producto
+  [ ] Las fotos (si las hay) estan en la carpeta del proyecto
+  [ ] featured: true solo si queres que aparezca en la home
+
+================================================================

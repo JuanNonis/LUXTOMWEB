@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Start-Process \"c:\\\\Users\\\\JUANP\\\\OneDrive\\\\Desktop\\\\LUXTOM\\\\producto-ambar-classic.html\")",
+      "PowerShell(Start-Process \"c:\\\\Users\\\\JUANP\\\\OneDrive\\\\Desktop\\\\LUXTOM\\\\producto.html?id=ambar-classic\")",
+      "PowerShell(Start-Process \"c:\\\\Users\\\\JUANP\\\\OneDrive\\\\Desktop\\\\LUXTOM\\\\shop.html\")",
+      "PowerShell(Start-Process \"c:\\\\Users\\\\JUANP\\\\OneDrive\\\\Desktop\\\\LUXTOM\\\\producto.html\")"
+    ]
+  }
+}
