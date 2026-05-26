@@ -16,7 +16,6 @@
   <a href="index.html" class="nav__logo">LUXTOM</a>
 
   <ul class="nav__links" id="navLinks">
-    <li><a href="index.html" class="active">Inicio</a></li>
     <li><a href="#contacto">Contacto</a></li>
     <li><a href="shop.html" class="nav__cta">Ver colección</a></li>
   </ul>
@@ -43,24 +42,17 @@
       Veladores artesanales que fusionan estética y función. Cada pieza diseñada para crear atmósferas únicas en tu hogar.
     </p>
     <div class="hero__actions">
-      <a href="shop.html" class="btn-primary">
-        Ver colección &rarr;
-      </a>
       <a href="#sobre-nosotros" class="btn-ghost">
         Nuestra historia
+      </a>
+      <a href="shop.html" class="btn-primary">
+        Ver colección &rarr;
       </a>
     </div>
   </div>
 
-  <div class="hero__visual">
-    <div class="lamp-hero">
-      <div class="lamp-hero__glow-ring"></div>
-      <div class="lamp-hero__body">
-        <div class="lamp-hero__shade"></div>
-        <div class="lamp-hero__neck"></div>
-        <div class="lamp-hero__base"></div>
-      </div>
-    </div>
+  <div class="hero__visual" aria-hidden="true">
+    <video autoplay muted loop playsinline preload="metadata" src="LUXTOM/veladoresjuntos.mp4"></video>
   </div>
 </section>
 
@@ -160,6 +152,28 @@
   const featuredGrid = document.getElementById('featuredGrid');
   const featured = Object.entries(PRODUCTOS).filter(([, p]) => p.featured);
   featuredGrid.innerHTML = featured.map(([id, p]) => renderCard(id, p)).join('');
+</script>
+<script>
+  // Ajusta el contenedor del video para que su altura coincida con la altura del texto
+  (function(){
+    const content = document.querySelector('.hero__content');
+    const visual = document.querySelector('.hero__visual');
+    if(!content || !visual) return;
+    const vid = visual.querySelector('video');
+    function fitVideoContainer(){
+      // altura objetivo: la altura total del bloque de texto
+      const target = Math.max(content.offsetHeight, 240);
+      visual.style.height = target + 'px';
+      // video fill by height, width auto to preserve full frame
+      if(vid){ vid.style.height = '100%'; vid.style.width = 'auto'; }
+    }
+    if(vid){
+      vid.addEventListener('loadedmetadata', fitVideoContainer);
+    }
+    window.addEventListener('resize', fitVideoContainer);
+    // run once after layout
+    setTimeout(fitVideoContainer, 120);
+  })();
 </script>
 </body>
 </html>
