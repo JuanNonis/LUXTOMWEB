@@ -395,6 +395,35 @@ section { padding: clamp(60px, 8vw, 110px) clamp(20px, 6vw, 80px); }
   cursor: pointer;
 }
 
+.product-card.hidden {
+  display: none !important;
+}
+
+.scroll-top {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--gold);
+  color: #080808;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 18px 34px rgba(0,0,0,0.24);
+  z-index: 200;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.scroll-top:hover {
+  transform: translateY(-2px);
+  background: var(--gold-light);
+}
+
 .product-card:hover {
   transform: translateY(-6px);
   border-color: var(--gold-border);

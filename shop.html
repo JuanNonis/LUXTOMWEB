@@ -42,9 +42,8 @@
 <!-- ─── FILTERS ────────────────────────────────── -->
 <div class="shop-filters">
   <button class="filter-btn active" data-filter="all">Todos</button>
-  <button class="filter-btn" data-filter="mesa">De mesa</button>
-  <button class="filter-btn" data-filter="pie">De pie</button>
-  <button class="filter-btn" data-filter="pared">De pared</button>
+  <button class="filter-btn" data-filter="simple">Simple</button>
+  <button class="filter-btn" data-filter="deluxe">Deluxe</button>
   <button class="filter-btn" data-filter="oferta">Ofertas</button>
 </div>
 
@@ -71,16 +70,15 @@
       <h4>Navegación</h4>
       <ul>
         <li><a href="index.html">Inicio</a></li>
-        <li><a href="shop.html">Shop</a></li>
         <li><a href="index.html#sobre-nosotros">Nosotros</a></li>
       </ul>
     </div>
     <div class="footer__col">
       <h4>Contacto</h4>
       <ul>
-        <li><a href="#">WhatsApp</a></li>
-        <li><a href="#">Instagram</a></li>
-        <li><a href="#">Email</a></li>
+        <li><a href="https://wa.me/5491173689423">WhatsApp</a></li>
+        <li><a href="https://www.instagram.com/luxtom3d/">Instagram</a></li>
+        <li><a href="mailto:luxtomilum@gmail.com">Email</a></li>
       </ul>
     </div>
   </div>
@@ -90,6 +88,7 @@
   </div>
 </footer>
 
+<button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">↑</button>
 
 <script src="productos.js"></script>
 <script>
@@ -108,7 +107,7 @@
     cards.forEach(card => {
       const cats = (card.dataset.cat || '').split(' ');
       const show = f === 'all' || cats.includes(f);
-      card.style.display = show ? '' : 'none';
+      card.classList.toggle('hidden', !show);
       if (show) visible++;
     });
     emptyMsg.style.display = visible === 0 ? 'block' : 'none';
@@ -121,6 +120,13 @@
       applyFilter(btn.dataset.filter);
     });
   });
+
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+  if (scrollTopBtn) {
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 </script>
 </body>
 </html>

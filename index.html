@@ -39,7 +39,7 @@
       espacios
     </h1>
     <p class="hero__subtitle">
-      Veladores artesanales que fusionan estética y función. Cada pieza diseñada para crear atmósferas únicas en tu hogar.
+      Veladores diseño original que fusionan estética y función. Cada pieza diseñada para crear atmósferas únicas en tu hogar.
     </p>
     <div class="hero__actions">
       <a href="#sobre-nosotros" class="btn-ghost">
@@ -61,12 +61,12 @@
 <div class="brand-strip">
   <div class="brand-strip__stats">
     <div class="stat">
-      <div class="stat__num">+200</div>
+      <div class="stat__num">+10</div>
       <div class="stat__label">Clientes felices</div>
     </div>
     <div class="stat">
-      <div class="stat__num">18</div>
-      <div class="stat__label">Modelos únicos</div>
+      <div class="stat__num">6</div>
+      <div class="stat__label">Modelos únicos y mas por venir</div>
     </div>
     <div class="stat">
       <div class="stat__num">100%</div>
@@ -74,10 +74,9 @@
     </div>
     <div class="stat">
       <div class="stat__num">2</div>
-      <div class="stat__label">Años de experiencia</div>
+      <div class="stat__label">Años de experiencia en el rubro</div>
     </div>
   </div>
-  <a href="shop.html" class="btn-ghost">Explorar todo</a>
 </div>
 
 
@@ -89,7 +88,6 @@
       <h2 class="section-title">Nuestros favoritos</h2>
       <p class="section-sub">Piezas seleccionadas que combinan diseño y calidez lumínica.</p>
     </div>
-    <a href="shop.html" class="btn-ghost">Ver todos &rarr;</a>
   </div>
 
   <div class="products-grid" id="featuredGrid"></div>
@@ -125,15 +123,14 @@
       <ul>
         <li><a href="index.html">Inicio</a></li>
         <li><a href="shop.html">Shop</a></li>
-        <li><a href="#sobre-nosotros">Nosotros</a></li>
       </ul>
     </div>
     <div class="footer__col">
       <h4>Contacto</h4>
       <ul>
-        <li><a href="#">WhatsApp</a></li>
-        <li><a href="#">Instagram</a></li>
-        <li><a href="#">Email</a></li>
+        <li><a href="https://wa.me/5491173689423">WhatsApp</a></li>
+        <li><a href="https://www.instagram.com/luxtom3d/">Instagram</a></li>
+        <li><a href="mailto:luxtomilum@gmail.com">Email</a></li>
       </ul>
     </div>
   </div>
@@ -142,6 +139,8 @@
     <p style="color: var(--muted); font-size:11px; letter-spacing:0.08em;">DISEÑO · LUZ · AMBIENTE</p>
   </div>
 </footer>
+
+<button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">↑</button>
 
 
 <script src="productos.js"></script>
@@ -152,6 +151,13 @@
   const featuredGrid = document.getElementById('featuredGrid');
   const featured = Object.entries(PRODUCTOS).filter(([, p]) => p.featured);
   featuredGrid.innerHTML = featured.map(([id, p]) => renderCard(id, p)).join('');
+
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+  if (scrollTopBtn) {
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 </script>
 <script>
   // Ajusta el contenedor del video para que su altura coincida con la altura del texto

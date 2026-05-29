@@ -94,9 +94,9 @@
     <div class="footer__col">
       <h4>Contacto</h4>
       <ul>
-        <li><a href="#">WhatsApp</a></li>
-        <li><a href="#">Instagram</a></li>
-        <li><a href="#">Email</a></li>
+        <li><a href="https://wa.me/5491173689423">WhatsApp</a></li>
+        <li><a href="https://www.instagram.com/luxtom3d/">Instagram</a></li>
+        <li><a href="mailto:luxtomilum@gmail.com">Email</a></li>
       </ul>
     </div>
   </div>
@@ -106,7 +106,7 @@
   </div>
 </footer>
 
-
+<button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">↑</button>
 
 <script src="productos.js"></script>
 <script>
@@ -304,6 +304,10 @@ if (!producto) {
 document.getElementById('burger')
   .addEventListener('click', () =>
     document.getElementById('navLinks').classList.toggle('open'));
-</script>
-</body>
-</html>
+
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+  if (scrollTopBtn) {
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }

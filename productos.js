@@ -8,6 +8,7 @@
    · precioDescuento → precio final con descuento (solo si descuento: true)
    · featured        → true = aparece en "Nuestros favoritos" del inicio
    · categoria       → "mesa" | "pie" | "pared"  (filtros del Shop)
+   · coleccion       → "simple" | "deluxe"      (nuevos filtros del Shop)
                        Los productos con descuento:true se agregan solos al filtro Ofertas
    · imagenes        → ["foto1.jpg", "foto2.jpg", ...]
                        Primera foto = portada en todas las tarjetas
@@ -27,6 +28,7 @@ const PRODUCTOS = {
     badge:           { texto: "Nuevo", clase: "badge--new" },
     featured:        true,
     categoria:       "mesa",
+    coleccion:       "simple",
     lampClase:       "lamp--warm",
     stock:           true,
     descCorta:       "Un velador moderno y minimalista con un diseño que decora tu espacio. La luz cálida que proyecta crea un ambiente íntimo, perfecto para dormitorios y livings.",
@@ -57,6 +59,7 @@ const PRODUCTOS = {
     badge:           { texto: "Top ventas", clase: "badge--hot" },
     featured:        true,
     categoria:       "mesa",
+    coleccion:       "simple",
     lampClase:       "lamp--neutral",
     stock:           true,
     descCorta:       "Un velador moderno y minimalista con un diseño ondulado como olas que decora tu espacio con suavidad. La luz cálida que proyecta crea un ambiente íntimo, perfecto para dormitorios y livings.",
@@ -87,6 +90,7 @@ const PRODUCTOS = {
     badge:           { texto: "Oferta", clase: "badge--sale" },
     featured:        true,
     categoria:       "mesa",
+    coleccion:       "simple",
     lampClase:       "lamp--rose",
     stock:           true,
     descCorta:       "Una pieza pensada para crear el ambiente más íntimo. La pantalla difumina una luz rosada suave que transforma cualquier dormitorio en un espacio de calma y romanticismo.",
@@ -117,6 +121,7 @@ const PRODUCTOS = {
     badge:           { texto: "Nuevo", clase: "badge--new" },
     featured:        false,
     categoria:       "pie",
+    coleccion:       "deluxe",
     lampClase:       "lamp--cool",
     stock:           true,
     descCorta:       "Una lámpara de pie de presencia imponente. La luz fría y la estructura slim de metal negro mate le dan un carácter contemporáneo y arquitectónico.",
@@ -149,6 +154,7 @@ const PRODUCTOS = {
     badge:           { texto: "Oferta", clase: "badge--sale" },
     featured:        false,
     categoria:       "mesa",
+    coleccion:       "deluxe",
     lampClase:       "lamp--amber",
     stock:           true,
     descCorta:       "Para los que aman lo clásico de verdad. La pantalla estilo farol y la base de hierro envejecido crean una pieza con alma de otra época, perfecta para ambientes con identidad propia.",
@@ -181,6 +187,7 @@ const PRODUCTOS = {
     badge:           null,
     featured:        false,
     categoria:       "pared",
+    coleccion:       "simple",
     lampClase:       "lamp--white",
     stock:           true,
     descCorta:       "Un aplique mural de diseño limpio que funciona tanto como iluminación funcional como elemento decorativo. Perfecto para pasillos, cabeceras de cama o entradas.",
@@ -213,6 +220,7 @@ const PRODUCTOS = {
     badge:           { texto: "Top ventas", clase: "badge--hot" },
     featured:        false,
     categoria:       "mesa",
+    coleccion:       "simple",
     lampClase:       "lamp--neutral",
     stock:           true,
     descCorta:       "La pantalla esférica de vidrio opalino dispersa la luz en todas direcciones, creando un ambiente suave y uniforme sin sombras duras.",
@@ -245,6 +253,7 @@ const PRODUCTOS = {
     badge:           null,
     featured:        false,
     categoria:       "pie",
+    coleccion:       "deluxe",
     lampClase:       "lamp--rose",
     stock:           true,
     descCorta:       "La versión de pie del clásico rosa. Estructura ultra delgada de acero pintado con una pantalla de tela rosada que crea el ambiente más sofisticado sin ocupar espacio visual.",
@@ -277,6 +286,7 @@ const PRODUCTOS = {
     badge:           { texto: "Oferta", clase: "badge--sale" },
     featured:        false,
     categoria:       "pared",
+    coleccion:       "simple",
     lampClase:       "lamp--amber",
     stock:           true,
     descCorta:       "Hierro negro, tubo de acero y vidrio ámbar. Un aplique con actitud industrial que lleva calidez a la pared sin concesiones estéticas. Para espacios que hablan fuerte.",
@@ -306,7 +316,7 @@ const PRODUCTOS = {
 /* ════ FUNCIÓN COMPARTIDA — Genera el HTML de una tarjeta de producto ════ */
 function renderCard(id, p) {
   const url  = `producto.html?id=${id}`;
-  const cats = [p.categoria, p.descuento ? 'oferta' : ''].filter(Boolean).join(' ');
+  const cats = [p.categoria, p.coleccion, p.descuento ? 'oferta' : ''].filter(Boolean).join(' ');
 
   // Imagen real o placeholder CSS
   const imgInner = (p.imagenes && p.imagenes.length > 0)
