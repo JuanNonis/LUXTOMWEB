@@ -19,7 +19,7 @@
 
 const PRODUCTOS = {
 
-  "TOM": {
+  "velador-tom": {
     nombre:          "Velador TOM",
     tagline:         "minimalista · luz LED · 20 cm",
     precio:          "$20.000",
@@ -39,7 +39,7 @@ const PRODUCTOS = {
       ["Portalámparas", "E27"],
     ],
     whatsapp:  "Hola! Me interesa el Velador TOM 💡",
-    video:     { tipo: "local", src: "LUXTOM/videos terminados/TOM/Atom_video_si.mp4", poster: "20260206_155859.jpg" },
+    video:     { tipo: "local", src: "LUXTOM/videos%20terminados/TOM/Atom_video_si.mp4", poster: "20260206_155859.jpg" },
     descLarga: "El <strong>Velador TOM</strong> nace de la búsqueda de un equilibrio perfecto entre lo moderno y minimalista. Su diseño limpio y geométrico se integra con facilidad en cualquier estilo decorativo, mientras que la luz cálida que emite crea un ambiente acogedor y relajante.<br><br>Fabricado con tecnología de impresión 3D en PLA, cada velador es una pieza única que combina innovación y estética. Ideal para quienes buscan una lámpara de mesa que sea tanto funcional como un elemento de diseño distintivo.",
     features: [
       { icon: "☀", titulo: "Luz cálida",    texto: "2700 K para ambientes íntimos y acogedores." },
@@ -50,7 +50,7 @@ const PRODUCTOS = {
     imagenes: ["LUXTOM/IMG_0029.jpeg"],
   },
 
-  "lino-minimal": {
+  "velador-tili": {
     nombre:          "Velador TILI",
     tagline:         "minimalista · luz LED · 20 cm",
     precio:          "$20.000",
@@ -70,7 +70,7 @@ const PRODUCTOS = {
       ["Portalámparas", "E27"],
     ],
     whatsapp:  "Hola! Me interesa el Velador TILI 💡",
-    video:     { tipo: "local", src: "LUXTOM/videos terminados/tili_video_si.mp4", poster: "20260206_155859.jpg" },
+    video:     { tipo: "local", src: "LUXTOM/videos%20terminados/tili_video_si.mp4", poster: "20260206_155859.jpg" },
     descLarga: "El <strong>Velador TILI</strong> nace de la búsqueda de un ambiente relajante. Su diseño ondulado como olas se integra con facilidad en cualquier estilo decorativo dandole al ambiente una sensacion de tranquilidad, mientras que la luz que emite crea un ambiente acogedor y relajante.<br><br>Fabricado con tecnología de impresión 3D en PLA, cada velador es una pieza única que combina innovación y estética. Ideal para quienes buscan una lámpara de mesa que sea tanto funcional como un elemento de diseño distintivo.",
     features: [
       { icon: "☀", titulo: "Luz cálida",    texto: "2700 K para ambientes íntimos y acogedores." },
@@ -81,7 +81,7 @@ const PRODUCTOS = {
     imagenes: ["LUXTOM/IMG_0067.jpeg"],
   },
 
-  "rosa-noche": {
+  "velador-spiral": {
     nombre:          "Velador SPIRAL",
     tagline:         "Luz rosada · Diseño romántico · 38 cm",
     precio:          "$20.000",
@@ -101,7 +101,7 @@ const PRODUCTOS = {
       ["Portalámparas", "E27"],
     ],
     whatsapp:  "Hola! Me interesa el Velador SPIRAL 💡",
-    video:     { tipo: "local", src: "LUXTOM/videos terminados/SPIRAL/Aspiral_video_si.mp4", poster: "20260206_155859.jpg" },
+    video:     { tipo: "local", src: "LUXTOM/videos%20terminados/SPIRAL/Aspiral_video_si.mp4", poster: "20260206_155859.jpg" },
     descLarga: "El <strong>Velador SPIRAL</strong> nació de la idea de que la luz puede ser tan importante como el perfume o la música a la hora de crear un ambiente special y sofisticado. Su pantalla elegante genera una iluminación cálida, envolvente y delicada.",
     features: [
       { icon: "☀", titulo: "Luz cálida",    texto: "2700 K para ambientes íntimos y acogedores." },
@@ -358,6 +358,7 @@ function renderCard(id, p) {
       <p class="product-card__desc">${p.tagline}</p>
       <div class="product-card__footer">
         ${precioHTML}
+        <button type="button" class="product-card__add" onclick="event.stopPropagation(); addToCart('${id}', 1);" aria-label="Agregar ${p.nombre} al carrito">+</button>
       </div>
     </div>
   </div>`;

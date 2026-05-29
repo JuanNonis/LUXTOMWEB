@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito — LUXTOM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav__logo">LUXTOM</a>
+  <ul class="nav__links" id="navLinks">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="index.html#contacto">Contacto</a></li>
+    <li><a href="cart.html" class="nav__cart-link">Carrito <span class="cart-badge" id="navCartCount">0</span></a></li>
+    <li><a href="shop.html" class="nav__cta">Ver colección</a></li>
+  </ul>
+  <button class="nav__burger" id="burger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero__inner">
+    <span class="section-label">✦ Carrito de compras</span>
+    <h1 class="section-title">Tu carrito</h1>
+    <p class="section-sub">Revisa tus veladores seleccionados, ajusta cantidades y finaliza la compra con un solo clic.</p>
+    <div class="hero__actions">
+      <a href="shop.html" class="btn-ghost">Seguir comprando</a>
+    </div>
+  </div>
+</section>
+
+<main class="cart-page">
+  <div class="cart-layout">
+    <section class="cart-items" id="cartItems"></section>
+
+    <aside class="cart-summary">
+      <div class="cart-summary__card">
+        <h2>Resumen del pedido</h2>
+        <div class="cart-summary__line">
+          <span>Artículos</span>
+          <strong id="cartItemCount">0</strong>
+        </div>
+        <div class="cart-summary__line">
+          <span>Total</span>
+          <strong id="cartTotal">$0</strong>
+        </div>
+        <a id="checkoutBtn" class="btn-primary" href="#">Finalizar compra</a>
+        <p class="cart-empty" id="cartEmpty">No hay productos en tu carrito aún. Agrega veladores desde la tienda o la página de producto.</p>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <a href="index.html" class="nav__logo">LUXTOM</a>
+      <p>Veladores de diseño exclusivo. Cada pieza pensada para transformar tu espacio con luz y estilo.</p>
+    </div>
+    <div class="footer__col">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="shop.html">Shop</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <h4>Contacto</h4>
+      <ul>
+        <li><a href="https://wa.me/5491173689423">WhatsApp</a></li>
+        <li><a href="https://www.instagram.com/luxtom3d/">Instagram</a></li>
+        <li><a href="mailto:luxtomilum@gmail.com">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <p>&copy; 2025 LUXTOM. Todos los derechos reservados.</p>
+    <p style="color: var(--muted); font-size:11px; letter-spacing:0.08em;">DISEÑO · LUZ · AMBIENTE</p>
+  </div>
+</footer>
+
+<button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">↑</button>
+
+<script src="productos.js"></script>
+<script src="carrito.js"></script>
+<script>
+  document.getElementById('burger').addEventListener('click', () =>
+    document.getElementById('navLinks').classList.toggle('open'));
+
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+  if (scrollTopBtn) {
+    scrollTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+</script>
+</body>
+</html>
