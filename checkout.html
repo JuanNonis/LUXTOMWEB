@@ -125,6 +125,8 @@
 <button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">↑</button>
 
 <script src="productos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
 <script src="admin-data.js"></script>
 <script src="carrito.js"></script>
 <script src="admin.js"></script>
@@ -176,7 +178,7 @@
   }
 
   if (sendReceiptBtn) {
-    sendReceiptBtn.addEventListener('click', event => {
+    sendReceiptBtn.addEventListener('click', async event => {
       event.preventDefault();
       const cliente = customerNameInput ? customerNameInput.value.trim() : '';
       if (!cliente) {
@@ -203,9 +205,27 @@
         comprobante: proofDataUrl || null
       };
 
-      data.orders.push(order);
-      saveAdminData(data);
-      alert('Pedido guardado en el tablero. Después de enviar el comprobante, avisá por WhatsApp indicando tu nombre y el número de pedido.');
+      let savedOnSupabase = false;
+      try {
+        if (typeof saveOrderToSupabase === 'function') {
+          const result = await saveOrderToSupabase(order);
+          savedOnSupabase = !!result;
+          if (savedOnSupabase) {
+            data.orders.push(order);
+            saveAdminData(data);
+          }
+        }
+      } catch (error) {
+        console.error('Error guardando en Supabase:', error);
+        savedOnSupabase = false;
+      }
+
+      if (!savedOnSupabase) {
+        data.orders.push(order);
+        saveAdminData(data);
+      }
+
+      alert('Pedido guardado en el tablero. Si estás conectado a Internet, también se intentó sincronizar con Supabase. Después de enviar el comprobante, avisá por WhatsApp indicando tu nombre y el número de pedido.');
       const message = `hola compre un producto mi nombre es ${cliente} y el numero de pedido es ${orderId}`;
       const whatsappUrl = `https://wa.me/${SUPPORT_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
       window.location.href = whatsappUrl;

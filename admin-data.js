@@ -76,3 +76,160 @@ const ADMIN_DEFAULT_DATA = {
     }
   ]
 };
+
+function getSupabaseClient() {
+  return globalThis.supabase || (typeof supabase !== 'undefined' ? supabase : null);
+}
+
+async function fetchSupabaseOrders() {
+  const client = getSupabaseClient();
+  if (!client) return null;
+  const { data, error } = await client.from('orders').select('*');
+  if (error) {
+    console.error('Error al leer pedidos de Supabase:', error);
+    return null;
+  }
+  return (data || []).map(row => ({
+    id: row.id,
+    cliente: row.cliente,
+    productos: row.productos || [],
+    total: row.total,
+    estado: row.estado,
+    fecha: row.fecha,
+    notas: row.notas,
+    comprobante: row.comprobante
+  }));
+}
+
+async function fetchSupabaseProducts() {
+  const client = getSupabaseClient();
+  if (!client) return null;
+  const { data, error } = await client.from('products').select('*');
+  if (error) {
+    console.error('Error al leer productos de Supabase:', error);
+    return null;
+  }
+  return (data || []).reduce((result, row) => {
+    const product = {
+      id: row.id,
+      nombre: row.nombre,
+      tagline: row.tagline,
+      precio: row.precio,
+      descuento: row.descuento,
+      precioDescuento: row.precio_descuento || null,
+      categoria: row.categoria,
+      coleccion: row.coleccion,
+      stock: row.stock,
+      imagenes: row.imagenes || [],
+      videos: row.videos || [],
+      descripcion: row.descripcion
+    };
+    result[product.id] = product;
+    return result;
+  }, {});
+}
+
+async function saveOrderToSupabase(order) {
+  const client = getSupabaseClient();
+  if (!client) {
+    console.error('No hay cliente Supabase disponible para guardar la orden.');
+    return null;
+  }
+
+  const numericTotal = Number(String(order.total).replace(/[^0-9]/g, '')) || 0;
+  const row = {
+    id: order.id,
+    cliente: order.cliente,
+    productos: order.productos,
+    total: numericTotal,
+    estado: order.estado,
+    fecha: order.fecha,
+    notas: order.notas,
+    comprobante: order.comprobante
+  };
+
+  // Evitar enviar columnas vacías (p. ej. 'notas' inexistente en la tabla)
+  const sanitized = Object.assign({}, row);
+  Object.keys(sanitized).forEach(key => {
+    const val = sanitized[key];
+    if (val === null || typeof val === 'undefined') {
+      delete sanitized[key];
+      return;
+    }
+    if (typeof val === 'string' && val.trim() === '') {
+      delete sanitized[key];
+      return;
+    }
+    if (Array.isArray(val) && val.length === 0) {
+      delete sanitized[key];
+      return;
+    }
+  });
+
+  let data = null;
+  let error = null;
+  try {
+    const res = await client.from('orders').insert([sanitized]).select();
+    data = res.data || null;
+    error = res.error || null;
+  } catch (err) {
+    console.error('Exception calling Supabase insert:', err);
+    error = err;
+  }
+
+  console.log('Supabase saveOrderToSupabase', { row, sanitized, data, error });
+
+  if (error) {
+    console.error('Error al guardar el pedido en Supabase:', error);
+    return null;
+  }
+
+  return (Array.isArray(data) && data[0]) ? data[0] : order;
+}
+
+async function saveProductToSupabase(product) {
+  const client = getSupabaseClient();
+  if (!client) return null;
+  const row = {
+    id: product.id,
+    nombre: product.nombre,
+    tagline: product.tagline,
+    precio: product.precio,
+    descuento: product.descuento,
+    precio_descuento: product.precioDescuento || null,
+    categoria: product.categoria,
+    coleccion: product.coleccion,
+    stock: product.stock,
+    imagenes: product.imagenes,
+    videos: product.videos,
+    descripcion: product.descripcion
+  };
+  const { error } = await client.from('products').upsert([row], { onConflict: 'id' });
+  if (error) {
+    console.error('Error al guardar el producto en Supabase:', error);
+    return null;
+  }
+  return product;
+}
+
+async function deleteProductFromSupabase(productId) {
+  const client = getSupabaseClient();
+  if (!client) return null;
+  const { error } = await client.from('products').delete().eq('id', productId);
+  if (error) {
+    console.error('Error al eliminar el producto de Supabase:', error);
+    return null;
+  }
+  return true;
+}
+
+async function updateOrderStatusInSupabase(orderId, nextStatus) {
+  const client = getSupabaseClient();
+  if (!client) return null;
+  const { error } = await client.from('orders').update({ estado: nextStatus }).eq('id', orderId);
+  if (error) {
+    console.error('Error al actualizar estado en Supabase:', error);
+    return null;
+  }
+  return true;
+}

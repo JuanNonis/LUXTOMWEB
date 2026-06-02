@@ -245,7 +245,7 @@ function renderCheckoutPage() {
   }
 
   emptyState.style.display = 'none';
-  checkoutItemCount.textContent = items.reduce((sum, item) => sum + item.qty, 0);
+  itemCountEl.textContent = items.reduce((sum, item) => sum + item.qty, 0);
   totalEl.textContent = formatPrice(cartSubtotal());
   cvuEl.textContent = CHECKOUT_CVU;
   aliasEl.textContent = CHECKOUT_ALIAS;

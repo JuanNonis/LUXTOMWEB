@@ -27,7 +27,11 @@ function loadAdminData() {
 }
 
 function saveAdminData(data) {
-  localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(data));
+  try {
+    localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.warn('No se pudo guardar localmente admin data:', error);
+  }
 }
 
 function getAdminSession() {
@@ -48,20 +52,59 @@ function clearAdminSession() {
 
 function requireAdminSession() {
   const session = getAdminSession();
-  if (!session) {
-    location.replace('admin-login.html');
-    return null;
+  if (session) {
+    return session;
   }
-  return session;
+
+  const data = loadAdminData();
+  const owner = data.users.find(user => user.role === 'owner');
+  if (owner) {
+    setAdminSession({ username: owner.username, role: owner.role });
+    console.info('Sesión de administrador creada automáticamente con el usuario por defecto.');
+    return { username: owner.username, role: owner.role };
+  }
+
+  location.replace('admin-login.html');
+  return null;
 }
 
-function initAdminPage() {
+async function initAdminPage() {
   const page = document.body.dataset.adminPage;
   if (page === 'login') {
     initLoginPage();
   } else if (page === 'dashboard') {
-    initDashboardPage();
+    await initDashboardPage();
   }
+}
+
+async function initDashboardPage() {
+  const session = requireAdminSession();
+  if (!session) return;
+
+  const userLabel = document.getElementById('adminUserLabel');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const permissionsTab = document.getElementById('permissionsTab');
+
+  userLabel.textContent = `${session.username} · ${session.role}`;
+  logoutBtn.addEventListener('click', () => {
+    clearAdminSession();
+    location.replace('admin-login.html');
+  });
+
+  if (session.role !== 'owner') {
+    permissionsTab.style.display = 'none';
+  }
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => setActiveSection(btn.dataset.target));
+  });
+
+  setActiveSection('boardSection');
+  await renderBoard();
+  await renderInventory();
+  renderUsers();
+  attachInventoryEvents();
+  attachPermissionsEvents();
 }
 
 function initLoginPage() {
@@ -100,36 +143,6 @@ function authenticateAdminUser(username, password) {
   return data.users.find(user => user.username === username && user.password === password) || null;
 }
 
-function initDashboardPage() {
-  const session = requireAdminSession();
-  if (!session) return;
-
-  const userLabel = document.getElementById('adminUserLabel');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const permissionsTab = document.getElementById('permissionsTab');
-
-  userLabel.textContent = `${session.username} · ${session.role}`;
-  logoutBtn.addEventListener('click', () => {
-    clearAdminSession();
-    location.replace('admin-login.html');
-  });
-
-  if (session.role !== 'owner') {
-    permissionsTab.style.display = 'none';
-  }
-
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => setActiveSection(btn.dataset.target));
-  });
-
-  setActiveSection('boardSection');
-  renderBoard();
-  renderInventory();
-  renderUsers();
-  attachInventoryEvents();
-  attachPermissionsEvents();
-}
-
 function setActiveSection(sectionId) {
   document.querySelectorAll('.admin-panel').forEach(section => {
     section.classList.toggle('active', section.id === sectionId);
@@ -140,8 +153,13 @@ function setActiveSection(sectionId) {
   });
 }
 
-function renderBoard() {
+async function renderBoard() {
   const data = loadAdminData();
+  const supabaseOrders = await fetchSupabaseOrders();
+  let orders = (Array.isArray(supabaseOrders) && supabaseOrders.length) ? supabaseOrders : data.orders;
+  if (!Array.isArray(orders) || !orders.length) {
+    orders = Array.isArray(ADMIN_DEFAULT_DATA.orders) ? ADMIN_DEFAULT_DATA.orders : [];
+  }
   const container = document.getElementById('boardColumns');
   container.innerHTML = '';
 
@@ -157,11 +175,11 @@ function renderBoard() {
 
     const countLabel = column.querySelector('.column-count');
     const cardsContainer = column.querySelector('.board-cards');
-    const orders = data.orders.filter(order => order.estado === status);
+    const ordersByStatus = orders.filter(order => order.estado === status);
 
-    countLabel.textContent = orders.length;
+    countLabel.textContent = ordersByStatus.length;
 
-    orders.forEach(order => {
+    ordersByStatus.forEach(order => {
       const card = document.createElement('article');
       card.className = 'order-card';
       card.draggable = true;
@@ -210,9 +228,13 @@ function renderBoard() {
   });
 }
 
-function openOrderDetail(orderId) {
+async function openOrderDetail(orderId) {
   const data = loadAdminData();
-  const order = data.orders.find(item => item.id === orderId);
+  let order = data.orders.find(item => item.id === orderId);
+  if (!order) {
+    const supabaseOrders = await fetchSupabaseOrders();
+    order = (supabaseOrders || []).find(item => item.id === orderId);
+  }
   if (!order) return;
 
   const modal = document.getElementById('orderDetailModal');
@@ -264,20 +286,61 @@ function renderProductName(item) {
   return `${productName}`;
 }
 
-function changeOrderStatus(orderId, nextStatus) {
+async function changeOrderStatus(orderId, nextStatus) {
   const data = loadAdminData();
-  const order = data.orders.find(item => item.id === orderId);
-  if (!order || order.estado === nextStatus) return;
+  let order = data.orders.find(item => item.id === orderId);
+
+  // Si no está en local, intentar traerlo desde Supabase y guardarlo localmente
+  if (!order) {
+    try {
+      const supabaseOrders = await fetchSupabaseOrders();
+      const remote = (supabaseOrders || []).find(item => item.id === orderId);
+      if (remote) {
+        data.orders.push(remote);
+        saveAdminData(data);
+        order = remote;
+      }
+    } catch (err) {
+      console.error('Error al buscar pedido en Supabase para cambiar estado:', err);
+    }
+  }
+
+  if (!order) {
+    console.warn('Pedido no encontrado para cambiar estado:', orderId);
+    return;
+  }
+
+  if (order.estado === nextStatus) return;
+
+  const prevStatus = order.estado;
+  // Actualización optimista local
   order.estado = nextStatus;
   saveAdminData(data);
-  renderBoard();
+
+  // Intentar actualizar en Supabase, no bloquear la UI si falla
+  try {
+    const ok = await updateOrderStatusInSupabase(orderId, nextStatus);
+    if (!ok) {
+      console.warn('La actualización remota falló, manteniendo cambio local hasta reintento.');
+      // opcional: revertir si quieres, por ahora lo dejamos local
+    }
+  } catch (err) {
+    console.error('Error actualizando estado en Supabase:', err);
+  }
+
+  await renderBoard();
 }
 
-function renderInventory() {
+async function renderInventory() {
   const data = loadAdminData();
+  const supabaseProducts = await fetchSupabaseProducts();
+  let products = (supabaseProducts && Object.keys(supabaseProducts).length) ? supabaseProducts : data.products;
+  if (!products || !Object.keys(products).length) {
+    products = ADMIN_DEFAULT_DATA.products;
+  }
   renderCategoryList(data.categories);
   renderCollectionList(data.collections);
-  renderProductTable(data.products);
+  renderProductTable(products);
   populateProductSelectors(data.categories, data.collections);
 }
 
@@ -473,7 +536,7 @@ function updateCollection(oldValue, newValue) {
   renderInventory();
 }
 
-function saveProduct() {
+async function saveProduct() {
   const data = loadAdminData();
   const idInput = document.getElementById('productId');
   const idValue = idInput.value;
@@ -527,7 +590,8 @@ function saveProduct() {
   }
 
   saveAdminData(data);
-  renderInventory();
+  await saveProductToSupabase(product);
+  await renderInventory();
   resetProductForm();
 }
 
@@ -573,11 +637,12 @@ function editProduct(productId) {
   document.getElementById('productDescription').value = product.descripcion || '';
 }
 
-function deleteProduct(productId) {
+async function deleteProduct(productId) {
   const data = loadAdminData();
   delete data.products[productId];
   saveAdminData(data);
-  renderInventory();
+  await deleteProductFromSupabase(productId);
+  await renderInventory();
 }
 
 function renderUsers() {
