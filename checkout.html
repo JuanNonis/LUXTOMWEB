@@ -51,8 +51,25 @@
             <strong id="checkoutBank">Banco LUXTOM</strong>
           </div>
         </div>
-        <p class="checkout-instructions">Después de realizar la transferencia, tocá "Enviar comprobante por WhatsApp" y adjuntá la imagen o captura del comprobante.</p>
-        <a id="sendReceiptBtn" class="btn-primary btn-full" href="#">Enviar comprobante por WhatsApp</a>
+        <p class="checkout-instructions">Después de realizar la transferencia, subí el comprobante y tocá "Avisar por WhatsApp con el nombre del pedido".</p>
+        <label>
+          Nombre
+          <input type="text" id="checkoutCustomerName" placeholder="Tu nombre" required>
+        </label>
+        
+        <label>
+          Comprobante de transferencia
+          <input type="file" id="paymentProofInput" accept="image/*">
+        </label>
+        <div class="proof-preview" id="proofPreview"></div>
+
+        <div class="order-id-row" style="display:flex;align-items:center;gap:10px;margin-top:12px;margin-bottom:8px;">
+          <span style="color:var(--muted);font-size:13px;">Número de pedido</span>
+          <strong id="orderIdDisplay" style="background:rgba(0,0,0,0.4);padding:6px 10px;border-radius:12px;color:#fff;">-</strong>
+          <button id="copyOrderIdBtn" class="btn-ghost" style="padding:6px 10px;border-radius:10px;">Copiar</button>
+        </div>
+
+        <a id="sendReceiptBtn" class="btn-primary btn-full" href="#">Avisar por WhatsApp con el nombre del pedido</a>
       </div>
       <div class="cart-summary__card">
         <h3>Contenido del pedido</h3>
@@ -108,7 +125,9 @@
 <button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">↑</button>
 
 <script src="productos.js"></script>
+<script src="admin-data.js"></script>
 <script src="carrito.js"></script>
+<script src="admin.js"></script>
 <script>
   document.getElementById('burger').addEventListener('click', () =>
     document.getElementById('navLinks').classList.toggle('open'));
@@ -117,6 +136,88 @@
   if (scrollTopBtn) {
     scrollTopBtn.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  const proofInput = document.getElementById('paymentProofInput');
+  const proofPreview = document.getElementById('proofPreview');
+  const customerNameInput = document.getElementById('checkoutCustomerName');
+  const sendReceiptBtn = document.getElementById('sendReceiptBtn');
+  const orderIdDisplay = document.getElementById('orderIdDisplay');
+  const copyOrderIdBtn = document.getElementById('copyOrderIdBtn');
+  let proofDataUrl = null;
+  const currentOrderId = `pedido-${Date.now()}`;
+  if (orderIdDisplay) orderIdDisplay.textContent = currentOrderId;
+
+  if (copyOrderIdBtn) {
+    copyOrderIdBtn.addEventListener('click', () => {
+      if (!currentOrderId) return;
+      navigator.clipboard && navigator.clipboard.writeText(currentOrderId).then(() => {
+        copyOrderIdBtn.textContent = 'Copiado';
+        setTimeout(() => copyOrderIdBtn.textContent = 'Copiar', 1500);
+      }).catch(() => {
+        alert('No se pudo copiar automáticamente. Seleccioná el número y copia manualmente.');
+      });
+    });
+  }
+
+  if (proofInput) {
+    proofInput.addEventListener('change', async () => {
+      const file = proofInput.files && proofInput.files[0];
+      if (!file) {
+        proofDataUrl = null;
+        proofPreview.innerHTML = '';
+        return;
+      }
+
+      proofDataUrl = await readFileAsDataURL(file);
+      proofPreview.innerHTML = `<img src="${proofDataUrl}" alt="Vista previa del comprobante" style="max-width:100%;border-radius:16px;border:1px solid rgba(255,255,255,0.12);">`;
+    });
+  }
+
+  if (sendReceiptBtn) {
+    sendReceiptBtn.addEventListener('click', event => {
+      event.preventDefault();
+      const cliente = customerNameInput ? customerNameInput.value.trim() : '';
+      if (!cliente) {
+        alert('Por favor ingresa tu nombre o alias para que podamos identificar el pedido.');
+        customerNameInput.focus();
+        return;
+      }
+      const data = loadAdminData();
+      const items = cartItems();
+      if (!items.length) {
+        alert('El carrito está vacío. Agregá productos antes de enviar el pedido.');
+        return;
+      }
+
+      const orderId = currentOrderId || `pedido-${Date.now()}`;
+      const order = {
+        id: orderId,
+        cliente,
+        productos: items.map(item => ({ id: item.id, cantidad: item.qty })),
+        total: formatPrice(cartSubtotal()),
+        estado: 'venta en proceso, esperando comprobante',
+        fecha: new Date().toLocaleDateString('es-AR'),
+        notas: '',
+        comprobante: proofDataUrl || null
+      };
+
+      data.orders.push(order);
+      saveAdminData(data);
+      alert('Pedido guardado en el tablero. Después de enviar el comprobante, avisá por WhatsApp indicando tu nombre y el número de pedido.');
+      const message = `hola compre un producto mi nombre es ${cliente} y el numero de pedido es ${orderId}`;
+      const whatsappUrl = `https://wa.me/${SUPPORT_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+      window.location.href = whatsappUrl;
+    });
+  }
+
+  function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
     });
   }
 </script>

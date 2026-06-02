@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — LUXTOM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body data-admin-page="dashboard">
+  <header class="admin-header">
+    <div class="admin-brand">
+      <a href="index.html" class="admin-logo">LUXTOM</a>
+      <div>
+        <p class="admin-brand-title">Panel interno</p>
+        <p class="admin-brand-subtitle">Gestión de pedidos, inventario y permisos</p>
+      </div>
+    </div>
+
+    <nav class="admin-tabs">
+      <button class="tab-btn active" data-target="boardSection">Pedidos</button>
+      <button class="tab-btn" data-target="inventorySection">Inventario</button>
+      <button class="tab-btn" data-target="permissionsSection" id="permissionsTab">Permisos</button>
+    </nav>
+
+    <div class="admin-actions">
+      <span id="adminUserLabel" class="admin-user-label"></span>
+      <button id="logoutBtn" class="btn-ghost">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <section id="boardSection" class="admin-panel active">
+      <div class="admin-panel-header">
+        <div>
+          <span class="section-label">✦ Pedidos</span>
+          <h1 class="section-title">Tablero Kanban</h1>
+          <p class="section-sub">Arrastra los pedidos entre estados para mantener el flujo actualizado.</p>
+        </div>
+      </div>
+
+      <div class="board-grid" id="boardColumns"></div>
+    </section>
+
+    <section id="inventorySection" class="admin-panel">
+      <div class="admin-panel-header">
+        <div>
+          <span class="section-label">✦ Inventario</span>
+          <h1 class="section-title">Stock y categorías</h1>
+          <p class="section-sub">Agrega nuevas categorías, colecciones y productos sin tocar el código.</p>
+        </div>
+      </div>
+
+      <div class="inventory-grid">
+        <div class="inventory-card">
+          <h2>Categorías</h2>
+          <div id="categoryList" class="tag-list"></div>
+          <form id="categoryForm" class="admin-form-inline">
+            <input type="text" id="categoryName" placeholder="Nueva categoría" required>
+            <button type="submit" class="btn-primary">Agregar</button>
+          </form>
+        </div>
+
+        <div class="inventory-card">
+          <h2>Colecciones</h2>
+          <div id="collectionList" class="tag-list"></div>
+          <form id="collectionForm" class="admin-form-inline">
+            <input type="text" id="collectionName" placeholder="Nueva colección" required>
+            <button type="submit" class="btn-primary">Agregar</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="inventory-card inventory-full">
+        <div class="inventory-card-header">
+          <div>
+            <h2>Productos</h2>
+            <p>Editar, crear o eliminar productos con imágenes y stock.</p>
+          </div>
+          <button id="resetProductBtn" class="btn-ghost">Nuevo producto</button>
+        </div>
+
+        <div class="inventory-panel">
+          <div class="inventory-form-card">
+            <h3 id="productFormTitle">Agregar producto</h3>
+            <form id="productForm" class="admin-form">
+              <input type="hidden" id="productId">
+              <label>
+                Nombre
+                <input type="text" id="productName" required>
+              </label>
+              <label>
+                Tagline
+                <input type="text" id="productTagline" required>
+              </label>
+              <label>
+                Precio
+                <input type="text" id="productPrice" placeholder="$20.000" required>
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="productDiscount">
+                Tiene descuento
+              </label>
+              <label>
+                Precio con descuento
+                <input type="text" id="productPriceDiscount" placeholder="$17.400">
+              </label>
+              <label>
+                Categoría
+                <select id="productCategory" required></select>
+              </label>
+              <label>
+                Colección
+                <select id="productCollection" required></select>
+              </label>
+              <label>
+                Stock
+                <input type="number" id="productStock" min="0" step="1" value="0" required>
+              </label>
+              <label>
+                Imágenes (URLs separadas por coma)
+                <input type="text" id="productImages" placeholder="LUXTOM/IMG_0029.jpeg, ...">
+              </label>
+              <label>
+                Videos (URLs separadas por coma)
+                <input type="text" id="productVideos" placeholder="LUXTOM/videos/clip.mp4, https://...">
+              </label>
+              <label>
+                Descripción
+                <textarea id="productDescription" rows="4"></textarea>
+              </label>
+              <div class="admin-form-actions">
+                <button type="submit" class="btn-primary">Guardar producto</button>
+                <button type="button" id="cancelProductBtn" class="btn-ghost">Cancelar</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="inventory-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Cat.</th>
+                  <th>Colección</th>
+                  <th>Stock</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="productTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="permissionsSection" class="admin-panel">
+      <div class="admin-panel-header">
+        <div>
+          <span class="section-label">✦ Permisos de administrador</span>
+          <h1 class="section-title">Cuentas y roles</h1>
+          <p class="section-sub">Solo el dueño puede gestionar las cuentas que ingresan al panel.</p>
+        </div>
+      </div>
+
+      <div class="inventory-card inventory-full">
+        <div class="inventory-card-header">
+          <div>
+            <h2>Usuarios</h2>
+            <p>Crea usuarios nuevos con permisos de propietario o staff.</p>
+          </div>
+        </div>
+
+        <div class="inventory-panel">
+          <div class="inventory-form-card">
+            <h3>Agregar usuario</h3>
+            <form id="userForm" class="admin-form">
+              <label>
+                Usuario
+                <input type="text" id="userName" required>
+              </label>
+              <label>
+                Contraseña
+                <input type="password" id="userPassword" required>
+              </label>
+              <label>
+                Rol
+                <select id="userRole">
+                  <option value="staff">Staff</option>
+                  <option value="owner">Owner</option>
+                </select>
+              </label>
+              <div class="admin-form-actions">
+                <button type="submit" class="btn-primary">Crear cuenta</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="inventory-table-card">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Usuario</th>
+                  <th>Rol</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="order-detail-modal hidden" id="orderDetailModal">
+    <div class="order-detail-panel" id="orderDetailContent"></div>
+  </div>
+
+  <script src="admin-data.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Admin — LUXTOM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body data-admin-page="login">
+  <main class="admin-login-page">
+    <div class="admin-login-card">
+      <div class="admin-login-brand">
+        <span>LUXTOM</span>
+        <small>Panel interno para gestión de pedidos</small>
+      </div>
+      <h1>Acceso para trabajadores</h1>
+      <p>Ingresa con tu usuario autorizado. No hay registro público.</p>
+
+      <form id="loginForm" class="admin-form">
+        <label>
+          Usuario
+          <input type="text" id="loginUsername" autocomplete="username" required>
+        </label>
+        <label>
+          Contraseña
+          <input type="password" id="loginPassword" autocomplete="current-password" required>
+        </label>
+        <button type="submit" class="btn-primary">Ingresar</button>
+      </form>
+
+      <div id="loginMessage" class="admin-form-message"></div>
+      <p class="admin-login-note">Si no eres trabajador de LUXTOM, no uses esta sección.</p>
+    </div>
+  </main>
+
+  <script src="admin-data.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

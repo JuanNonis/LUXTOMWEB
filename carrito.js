@@ -146,6 +146,9 @@ function renderCartPage() {
   checkoutBtn.textContent = 'Finalizar compra';
   checkoutBtn.classList.remove('btn-disabled');
 
+  // El botón de "Finalizar compra" solo redirige a checkout; la orden se crea
+  // cuando el usuario confirma y toca el botón de WhatsApp en checkout.html.
+
   itemsContainer.innerHTML = items.map(item => {
     const price = parsePrice(item.producto.precioDescuento || item.producto.precio);
     const subtotal = formatPrice(price * item.qty);
