@@ -117,6 +117,7 @@ function buildCheckoutMessage() {
   return `Hola! Estoy interesado en este pedido de LUXTOM:\n${lines.join('\n')}\nTotal: ${total}`;
 }
 
+
 function renderCartPage() {
   const itemsContainer = document.getElementById('cartItems');
   const summaryCount = document.getElementById('cartItemCount');
@@ -142,8 +143,8 @@ function renderCartPage() {
   emptyState.style.display = 'none';
   summaryCount.textContent = items.reduce((sum, item) => sum + item.qty, 0);
   summaryTotal.textContent = formatPrice(cartSubtotal());
-  checkoutBtn.href = 'checkout.html';
-  checkoutBtn.textContent = 'Finalizar compra';
+  checkoutBtn.href = 'datos-cliente.html';
+  checkoutBtn.textContent = 'Continuar con la compra';
   checkoutBtn.classList.remove('btn-disabled');
 
   // El botón de "Finalizar compra" solo redirige a checkout; la orden se crea
@@ -158,13 +159,13 @@ function renderCartPage() {
 
     return `
       <article class="cart-item">
-        <div class="cart-item__image">
+        <a href="producto.html?id=${item.id}" class="cart-item__image" style="display:block;">
           ${image ? `<img src="${image}" alt="${item.producto.nombre}">` : `<div class="cart-item__placeholder"></div>`}
-        </div>
+        </a>
         <div class="cart-item__content">
           <div class="cart-item__header">
             <div>
-              <h3>${item.producto.nombre}</h3>
+              <h3><a href="producto.html?id=${item.id}" style="color:inherit;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${item.producto.nombre}</a></h3>
               <p>${item.producto.tagline}</p>
             </div>
             <button type="button" class="cart-item__remove" data-id="${item.id}">Eliminar</button>
@@ -204,6 +205,7 @@ function renderCartPage() {
   itemsContainer.querySelectorAll('.cart-item__remove').forEach(button => {
     button.addEventListener('click', () => removeCartItem(button.dataset.id));
   });
+
 }
 
 function buildReceiptMessage() {
@@ -263,6 +265,7 @@ function renderCheckoutPage() {
         <span>${subtotal}</span>
       </div>`;
   }).join('');
+
 }
 
 function setupProductPageCart(productId) {

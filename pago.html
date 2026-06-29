@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pago — LUXTOM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav__logo">LUXTOM</a>
+  <ul class="nav__links" id="navLinks">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="index.html#contacto">Contacto</a></li>
+    <li><a href="cart.html" class="nav__cart-link">Carrito <span class="cart-badge" id="navCartCount">0</span></a></li>
+    <li><a href="shop.html" class="nav__cta">Ver colección</a></li>
+  </ul>
+  <button class="nav__burger" id="burger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- PROGRESS BAR -->
+<div class="checkout-steps-wrapper">
+  <div class="checkout-steps">
+    <div class="checkout-step done">
+      <div class="checkout-step__num">✓</div>
+      <span class="checkout-step__label">Carrito</span>
+    </div>
+    <div class="checkout-step__bar done"></div>
+    <div class="checkout-step done">
+      <div class="checkout-step__num">✓</div>
+      <span class="checkout-step__label">Datos</span>
+    </div>
+    <div class="checkout-step__bar done"></div>
+    <div class="checkout-step done">
+      <div class="checkout-step__num">✓</div>
+      <span class="checkout-step__label">Envío</span>
+    </div>
+    <div class="checkout-step__bar done"></div>
+    <div class="checkout-step done">
+      <div class="checkout-step__num">✓</div>
+      <span class="checkout-step__label">Confirmar</span>
+    </div>
+    <div class="checkout-step__bar done"></div>
+    <div class="checkout-step active">
+      <div class="checkout-step__num">5</div>
+      <span class="checkout-step__label">Pago</span>
+    </div>
+  </div>
+</div>
+
+<section class="page-hero">
+  <div class="page-hero__inner">
+    <span class="section-label">✦ ¡Pedido confirmado!</span>
+    <h1 class="section-title">¡Gracias por tu compra!</h1>
+    <p class="section-sub">Tu pedido fue registrado con éxito. Ahora realizá la transferencia y avisanos por WhatsApp.</p>
+  </div>
+</section>
+
+<main class="cart-page checkout-page">
+  <div class="cart-layout">
+    <section class="checkout-details">
+
+      <!-- Pedido registrado -->
+      <div class="cart-summary__card" style="border-color:rgba(37,211,102,0.25);background:rgba(37,211,102,0.03);">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:rgba(37,211,102,0.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">✓</div>
+          <div>
+            <p style="font-weight:600;color:#4cdb83;margin:0;font-size:15px;">Pedido registrado</p>
+            <p style="color:var(--muted);font-size:13px;margin:6px 0 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              Número:
+              <strong id="orderIdDisplay" style="color:#fff;background:rgba(0,0,0,0.4);padding:2px 10px;border-radius:8px;">—</strong>
+              <button id="copyOrderIdBtn" class="btn-ghost" style="padding:4px 10px;font-size:11px;border-radius:8px;">Copiar</button>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Datos de pago -->
+      <div class="cart-summary__card">
+        <h2>Datos para la transferencia</h2>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:16px;">Transferí el total al siguiente CVU y avisanos por WhatsApp con el comprobante.</p>
+        <div class="checkout-cvu-card">
+          <div class="checkout-cvu-row">
+            <span>CVU</span>
+            <strong id="checkoutCvu">0000000000000000000000</strong>
+          </div>
+          <div class="checkout-cvu-row">
+            <span>Alias</span>
+            <strong id="checkoutAlias">luxtom.pago</strong>
+          </div>
+          <div class="checkout-cvu-row">
+            <span>Banco</span>
+            <strong id="checkoutBank">Banco LUXTOM</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comprobante (opcional) -->
+      <div class="cart-summary__card">
+        <h3 style="margin-bottom:4px;">Comprobante de transferencia</h3>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">Opcional — podés adjuntarlo acá o mandarlo directo por WhatsApp.</p>
+        <label for="paymentProofInput" class="proof-upload-label" id="proofUploadLabel">
+          <span class="proof-upload-icon">↑</span>
+          <span class="proof-upload-text" id="proofUploadText">Seleccioná una imagen</span>
+          <span class="proof-upload-sub">JPG, PNG o HEIC · Máx. 10 MB</span>
+        </label>
+        <input type="file" id="paymentProofInput" accept="image/*" style="display:none;">
+        <p id="uploadStatus" style="font-size:12px;color:var(--muted);margin-top:8px;"></p>
+        <div id="proofPreview"></div>
+      </div>
+
+      <!-- Avisar por WhatsApp -->
+      <div class="cart-summary__card">
+        <h3 style="margin-bottom:4px;">Avisanos que transferiste</h3>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:16px;">
+          Abrí WhatsApp con el detalle de tu pedido. Podés adjuntar el comprobante ahí mismo.
+        </p>
+        <a id="sendReceiptBtn" class="btn-primary btn-full" href="#" target="_blank" rel="noopener">
+          Avisar por WhatsApp →
+        </a>
+        <p style="text-align:center;color:var(--muted);font-size:11px;margin-top:10px;">Podés volver a abrirlo las veces que necesites.</p>
+      </div>
+
+    </section>
+
+    <aside class="cart-summary">
+      <div class="cart-summary__card">
+        <h2>Tu pedido</h2>
+        <div id="pagoItems" style="margin-bottom:8px;"></div>
+        <div class="cart-summary__line" id="pagoShippingLine" style="display:none;">
+          <span>Envío</span>
+          <strong id="pagoShipping">—</strong>
+        </div>
+        <div class="cart-summary__line" style="border-top:1px solid rgba(255,255,255,0.06);padding-top:16px;margin-top:4px;">
+          <span>Total</span>
+          <strong id="pagoTotal" style="color:var(--gold-light);">$0</strong>
+        </div>
+        <a href="index.html" class="btn-ghost" style="text-align:center;justify-content:center;margin-top:16px;">
+          Volver al inicio
+        </a>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <a href="index.html" class="nav__logo">LUXTOM</a>
+      <p>Veladores de diseño exclusivo. Cada pieza pensada para transformar tu espacio con luz y estilo.</p>
+    </div>
+    <div class="footer__col">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="shop.html">Shop</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <h4>Contacto</h4>
+      <ul>
+        <li><a href="https://wa.me/5491173689423">WhatsApp</a></li>
+        <li><a href="https://www.instagram.com/luxtom3d/">Instagram</a></li>
+        <li><a href="mailto:luxtomilum@gmail.com">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <p>&copy; 2025 LUXTOM. Todos los derechos reservados.</p>
+    <p style="color:var(--muted);font-size:11px;letter-spacing:0.08em;">DISEÑO · LUZ · AMBIENTE</p>
+  </div>
+</footer>
+
+<button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">↑</button>
+
+<script src="productos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="admin-data.js"></script>
+<script src="carrito.js"></script>
+<script>
+  document.getElementById('burger').addEventListener('click', () =>
+    document.getElementById('navLinks').classList.toggle('open'));
+
+  document.getElementById('scrollTopBtn')?.addEventListener('click', () =>
+    window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // ─── Cargar pedido desde sessionStorage ─────────────────────────
+  let lastOrder = null;
+  try { lastOrder = JSON.parse(sessionStorage.getItem('LUXTOM_lastOrder')); } catch { }
+
+  if (!lastOrder) {
+    window.location.href = 'cart.html';
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    if (!lastOrder) return;
+
+    // Order ID
+    const orderIdEl = document.getElementById('orderIdDisplay');
+    if (orderIdEl) orderIdEl.textContent = lastOrder.id;
+
+    const copyBtn = document.getElementById('copyOrderIdBtn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard && navigator.clipboard.writeText(lastOrder.id).then(() => {
+          copyBtn.textContent = 'Copiado';
+          setTimeout(() => copyBtn.textContent = 'Copiar', 1500);
+        });
+      });
+    }
+
+    // Items
+    const itemsEl = document.getElementById('pagoItems');
+    if (itemsEl && lastOrder.items) {
+      itemsEl.innerHTML = lastOrder.items.map(item => `
+        <div class="mini-summary__item">
+          <strong>${item.nombre}</strong>
+          <span>${item.qty} × ${item.precio}</span>
+        </div>`).join('');
+    }
+
+    // Envío
+    const s = lastOrder.shipping;
+    const shippingLineEl = document.getElementById('pagoShippingLine');
+    const shippingEl     = document.getElementById('pagoShipping');
+    if (s && (s.precio !== 0 || s.pendiente)) {
+      if (shippingLineEl) shippingLineEl.style.display = 'flex';
+      if (shippingEl) {
+        shippingEl.textContent = s.pendiente ? 'A cotizar' : formatPrice(lastOrder.shippingCost);
+      }
+    }
+
+    // Total
+    const totalEl = document.getElementById('pagoTotal');
+    if (totalEl) totalEl.textContent = lastOrder.grandTotal;
+
+    // WhatsApp URL
+    buildWhatsAppUrl();
+  });
+
+  function buildWhatsAppUrl() {
+    if (!lastOrder) return;
+    const { id, cliente, items, shipping, shippingCost, grandTotal } = lastOrder;
+    const itemLines = (items || []).map(i => `- ${i.nombre} x${i.qty} (${i.precio} c/u)`).join('\n');
+    const shippingLine = !shipping ? ''
+      : shipping.pendiente ? `\nEnvío: ${shipping.label} (costo a confirmar)`
+      : shipping.precio === 0 ? '\nEnvío: Gratis (retiro en taller)'
+      : `\nEnvío: ${shipping.label} — ${formatPrice(shippingCost)}`;
+
+    const msg = `Hola! Realicé la transferencia para mi pedido LUXTOM.\n\nPedido: ${id}\nNombre: ${cliente}\n\n${itemLines}${shippingLine}\nTotal: ${grandTotal}\n\nAdjunto comprobante.`;
+    const btn = document.getElementById('sendReceiptBtn');
+    if (btn) btn.href = `https://wa.me/${SUPPORT_WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  }
+
+  // ─── Comprobante upload (opcional) ──────────────────────────────
+  const proofInput      = document.getElementById('paymentProofInput');
+  const proofUploadLabel = document.getElementById('proofUploadLabel');
+  const proofUploadText  = document.getElementById('proofUploadText');
+  const uploadStatus     = document.getElementById('uploadStatus');
+  const proofPreview     = document.getElementById('proofPreview');
+
+  if (proofInput) {
+    proofInput.addEventListener('change', async () => {
+      const file = proofInput.files && proofInput.files[0];
+      if (!file || !lastOrder) return;
+
+      if (proofUploadLabel) proofUploadLabel.classList.add('uploading');
+      if (uploadStatus) { uploadStatus.textContent = 'Subiendo...'; uploadStatus.style.color = 'var(--muted)'; }
+
+      try {
+        const url = await uploadComprobanteToStorage(lastOrder.id, file);
+        if (proofUploadText)  proofUploadText.textContent = file.name;
+        if (proofUploadLabel) { proofUploadLabel.classList.remove('uploading'); proofUploadLabel.classList.add('has-file'); }
+        if (uploadStatus)     { uploadStatus.textContent = '✓ Comprobante guardado.'; uploadStatus.style.color = '#25d366'; }
+        if (proofPreview)     proofPreview.innerHTML = `<img src="${url}" alt="Comprobante" style="max-width:100%;border-radius:14px;border:1px solid rgba(255,255,255,0.08);margin-top:12px;">`;
+        proofInput.value = '';
+      } catch (err) {
+        if (proofUploadLabel) proofUploadLabel.classList.remove('uploading');
+        if (uploadStatus)     { uploadStatus.textContent = 'No se pudo subir: ' + err.message; uploadStatus.style.color = '#e07070'; }
+      }
+    });
+  }
+</script>
+</body>
+</html>

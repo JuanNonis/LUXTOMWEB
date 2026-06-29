@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MÃ©todo de envÃ­o â€” LUXTOM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav__logo">LUXTOM</a>
+  <ul class="nav__links" id="navLinks">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="index.html#contacto">Contacto</a></li>
+    <li><a href="cart.html" class="nav__cart-link">Carrito <span class="cart-badge" id="navCartCount">0</span></a></li>
+    <li><a href="shop.html" class="nav__cta">Ver colecciÃ³n</a></li>
+  </ul>
+  <button class="nav__burger" id="burger" aria-label="MenÃº">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- PROGRESS BAR -->
+<div class="checkout-steps-wrapper">
+  <div class="checkout-steps">
+    <div class="checkout-step done">
+      <div class="checkout-step__num">âœ“</div>
+      <span class="checkout-step__label">Carrito</span>
+    </div>
+    <div class="checkout-step__bar done"></div>
+    <div class="checkout-step done">
+      <div class="checkout-step__num">âœ“</div>
+      <span class="checkout-step__label">Datos</span>
+    </div>
+    <div class="checkout-step__bar done"></div>
+    <div class="checkout-step active">
+      <div class="checkout-step__num">3</div>
+      <span class="checkout-step__label">EnvÃ­o</span>
+    </div>
+    <div class="checkout-step__bar"></div>
+    <div class="checkout-step">
+      <div class="checkout-step__num">4</div>
+      <span class="checkout-step__label">Pago</span>
+    </div>
+  </div>
+</div>
+
+<main class="shipping-page">
+  <div class="shipping-layout">
+
+    <section class="form-card">
+      <h2>ElegÃ­ tu mÃ©todo de envÃ­o</h2>
+      <p style="color:var(--muted);font-size:14px;margin-top:-8px;">Entregamos a todo el paÃ­s. SeleccionÃ¡ la opciÃ³n que mÃ¡s te convenga.</p>
+
+      <div class="shipping-options" id="shippingOptions">
+
+        <!-- Retiro en taller -->
+        <label class="shipping-option">
+          <input type="radio" name="shipping" value="retiro" id="optRetiro">
+          <div class="shipping-option__card">
+            <div class="shipping-option__icon">ðŸ </div>
+            <div class="shipping-option__info">
+              <strong>Retiro en nuestro taller</strong>
+              <p>PasÃ¡s a buscar tu pedido. Coordinamos dÃ­a y horario por WhatsApp.</p>
+            </div>
+            <div class="shipping-option__price">
+              <span class="price">Gratis</span>
+              <span class="eta">A coordinar</span>
+            </div>
+          </div>
+        </label>
+
+        <!-- Andreani -->
+        <label class="shipping-option">
+          <input type="radio" name="shipping" value="andreani" id="optAndreani">
+          <div class="shipping-option__card">
+            <div class="shipping-option__icon">ðŸ“¦</div>
+            <div class="shipping-option__info">
+              <strong>Correo</strong>
+              <p>EnvÃ­o a todo el paÃ­s. Seguimiento online incluido.</p>
+            </div>
+            <div class="shipping-option__price">
+              <span class="price">A coordinar</span>
+              <span class="eta">3â€“5 dÃ­as hÃ¡biles</span>
+            </div>
+          </div>
+        </label>
+
+        <!-- Didi Auto -->
+        <label class="shipping-option">
+          <input type="radio" name="shipping" value="didi" id="optDidi">
+          <div class="shipping-option__card">
+            <div class="shipping-option__icon">ðŸš—</div>
+            <div class="shipping-option__info">
+              <strong>Didi Auto â€” Mismo dÃ­a</strong>
+              <p>Disponible en CABA y GBA. El paquete llega el mismo dÃ­a en horas.</p>
+            </div>
+            <div class="shipping-option__price">
+              <span class="price">5kâ€“15k</span>
+              <span class="eta">Hoy</span>
+            </div>
+          </div>
+        </label>
+
+      </div>
+
+      <p style="color:var(--muted);font-size:12px;line-height:1.6;margin-top:12px;">
+        IMPORTANTE: los envÃ­os se coordinan con nosotros a travÃ©s de WhatsApp luego de confirmar el pedido.
+      </p>
+
+      <p id="shippingError" style="color:#e07070;font-size:13px;display:none;margin-top:4px;">SeleccionÃ¡ un mÃ©todo de envÃ­o para continuar.</p>
+
+      <button id="continueBtn" class="btn-primary btn-full" style="margin-top:16px;border:none;cursor:pointer;">
+        Continuar al pago â†’
+      </button>
+    </section>
+
+    <aside>
+      <div class="mini-summary">
+        <h2>Tu pedido</h2>
+        <div class="mini-summary__items" id="miniItems">
+          <p style="color:var(--muted);font-size:13px;">Cargando...</p>
+        </div>
+        <div class="mini-summary__total">
+          <span>Subtotal</span>
+          <span id="miniTotal">$0</span>
+        </div>
+        <a href="datos-cliente.html" class="btn-ghost" style="text-align:center;justify-content:center;">â† Editar datos</a>
+      </div>
+    </aside>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <a href="index.html" class="nav__logo">LUXTOM</a>
+      <p>Veladores de diseÃ±o exclusivo. Cada pieza pensada para transformar tu espacio con luz y estilo.</p>
+    </div>
+    <div class="footer__col">
+      <h4>NavegaciÃ³n</h4>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="shop.html">Shop</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <h4>Contacto</h4>
+      <ul>
+        <li><a href="https://wa.me/5491173689423">WhatsApp</a></li>
+        <li><a href="https://www.instagram.com/luxtom3d/">Instagram</a></li>
+        <li><a href="mailto:luxtomilum@gmail.com">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <p>&copy; 2025 LUXTOM. Todos los derechos reservados.</p>
+    <p style="color:var(--muted);font-size:11px;letter-spacing:0.08em;">DISEÃ‘O Â· LUZ Â· AMBIENTE</p>
+  </div>
+</footer>
+
+<script src="productos.js"></script>
+<script src="carrito.js"></script>
+<script>
+  const SHIPPING_KEY = 'LUXTOM_shipping';
+  const CUSTOMER_KEY = 'LUXTOM_customer';
+
+  document.getElementById('burger').addEventListener('click', () =>
+    document.getElementById('navLinks').classList.toggle('open'));
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const customer = (() => { try { return JSON.parse(localStorage.getItem(CUSTOMER_KEY)) || null; } catch { return null; } })();
+    if (!customer || !customer.nombre) { window.location.href = 'datos-cliente.html'; return; }
+    if (!cartItems().length) { window.location.href = 'cart.html'; return; }
+
+    renderMiniSummary();
+
+    // Restore previous selection if user navigated back
+    try {
+      const saved = JSON.parse(localStorage.getItem(SHIPPING_KEY));
+      if (saved && saved.method) {
+        const radio = document.querySelector(`input[name="shipping"][value="${saved.method}"]`);
+        if (radio) radio.checked = true;
+      }
+    } catch { /* ignore */ }
+  });
+
+  function renderMiniSummary() {
+    const items = cartItems();
+    const container = document.getElementById('miniItems');
+    const totalEl   = document.getElementById('miniTotal');
+    if (!container) return;
+
+    container.innerHTML = items.map(item => {
+      const price = parsePrice(item.producto.precioDescuento || item.producto.precio);
+      return `<div class="mini-summary__item">
+        <strong>${item.producto.nombre}</strong>
+        <span>${item.qty} Ã— ${formatPrice(price)}</span>
+      </div>`;
+    }).join('');
+
+    if (totalEl) totalEl.textContent = formatPrice(cartSubtotal());
+  }
+
+  function getShippingPayload(method) {
+    if (method === 'retiro')   return { method: 'retiro',   label: 'Retiro en taller',      precio: 0,    plazo: 'A coordinar',    pendiente: false };
+    if (method === 'andreani') return { method: 'andreani', label: 'Correo',                 precio: null, plazo: '3â€“5 dÃ­as hÃ¡biles', pendiente: true  };
+    if (method === 'didi')     return { method: 'didi',     label: 'Didi Auto â€“ Mismo dÃ­a',  precio: null, plazo: 'Hoy',             pendiente: true  };
+    return null;
+  }
+
+  document.getElementById('continueBtn').addEventListener('click', () => {
+    const selected = document.querySelector('input[name="shipping"]:checked');
+    const errorEl  = document.getElementById('shippingError');
+
+    if (!selected) { errorEl.style.display = 'block'; return; }
+
+    errorEl.style.display = 'none';
+    localStorage.setItem(SHIPPING_KEY, JSON.stringify(getShippingPayload(selected.value)));
+    window.location.href = 'checkout.html';
+  });
+</script>
+</body>
+</html>
+

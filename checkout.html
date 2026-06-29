@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout — LUXTOM</title>
+  <title>Confirmar pedido — LUXTOM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -24,57 +24,87 @@
   </button>
 </nav>
 
+<!-- PROGRESS BAR -->
+<div class="checkout-steps-wrapper">
+  <div class="checkout-steps">
+    <div class="checkout-step done">
+      <div class="checkout-step__num">✓</div>
+      <span class="checkout-step__label">Carrito</span>
+    </div>
+    <div class="checkout-step__bar done"></div>
+    <div class="checkout-step done">
+      <div class="checkout-step__num">✓</div>
+      <span class="checkout-step__label">Datos</span>
+    </div>
+    <div class="checkout-step__bar done"></div>
+    <div class="checkout-step done">
+      <div class="checkout-step__num">✓</div>
+      <span class="checkout-step__label">Envío</span>
+    </div>
+    <div class="checkout-step__bar done"></div>
+    <div class="checkout-step active">
+      <div class="checkout-step__num">4</div>
+      <span class="checkout-step__label">Confirmar</span>
+    </div>
+    <div class="checkout-step__bar"></div>
+    <div class="checkout-step">
+      <div class="checkout-step__num">5</div>
+      <span class="checkout-step__label">Pago</span>
+    </div>
+  </div>
+</div>
+
 <section class="page-hero">
   <div class="page-hero__inner">
-    <span class="section-label">✦ Confirmá tu pago</span>
-    <h1 class="section-title">Transferí al CVU</h1>
-    <p class="section-sub">Realizá la transferencia del total al CVU de LUXTOM y luego envía el comprobante por WhatsApp.</p>
+    <span class="section-label">✦ Paso 4 de 5</span>
+    <h1 class="section-title">Confirmá tu pedido</h1>
+    <p class="section-sub">Revisá tus datos y el método de envío antes de continuar al pago.</p>
   </div>
 </section>
 
 <main class="cart-page checkout-page">
   <div class="cart-layout">
     <section class="checkout-details">
-      <div class="cart-summary__card">
-        <h2>Datos de pago</h2>
-        <div class="checkout-cvu-card">
-          <div class="checkout-cvu-row">
-            <span>CVU</span>
-            <strong id="checkoutCvu">0000000000000000000000</strong>
-          </div>
-          <div class="checkout-cvu-row">
-            <span>Alias</span>
-            <strong id="checkoutAlias">luxtom.pago</strong>
-          </div>
-          <div class="checkout-cvu-row">
-            <span>Banco</span>
-            <strong id="checkoutBank">Banco LUXTOM</strong>
-          </div>
-        </div>
-        <p class="checkout-instructions">Después de realizar la transferencia, subí el comprobante y tocá "Avisar por WhatsApp con el nombre del pedido".</p>
-        <label>
-          Nombre
-          <input type="text" id="checkoutCustomerName" placeholder="Tu nombre" required>
-        </label>
-        
-        <label>
-          Comprobante de transferencia
-          <input type="file" id="paymentProofInput" accept="image/*">
-        </label>
-        <div class="proof-preview" id="proofPreview"></div>
 
-        <div class="order-id-row" style="display:flex;align-items:center;gap:10px;margin-top:12px;margin-bottom:8px;">
-          <span style="color:var(--muted);font-size:13px;">Número de pedido</span>
-          <strong id="orderIdDisplay" style="background:rgba(0,0,0,0.4);padding:6px 10px;border-radius:12px;color:#fff;">-</strong>
-          <button id="copyOrderIdBtn" class="btn-ghost" style="padding:6px 10px;border-radius:10px;">Copiar</button>
+      <!-- Datos del cliente -->
+      <div class="cart-summary__card" id="customerSummaryCard">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+          <h3 style="margin:0;">Datos de entrega</h3>
+          <a href="datos-cliente.html" class="btn-ghost" style="padding:8px 14px;font-size:11px;">Editar</a>
         </div>
-
-        <a id="sendReceiptBtn" class="btn-primary btn-full" href="#">Avisar por WhatsApp con el nombre del pedido</a>
+        <div class="customer-summary" id="customerSummary">
+          <p style="color:var(--muted);font-size:13px;">Cargando datos...</p>
+        </div>
       </div>
+
+      <!-- Método de envío -->
+      <div class="cart-summary__card" id="shippingSummaryCard">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+          <h3 style="margin:0;">Método de envío</h3>
+          <a href="envio.html" class="btn-ghost" style="padding:8px 14px;font-size:11px;">Editar</a>
+        </div>
+        <div class="shipping-summary-row" id="shippingSummaryRow">
+          <span id="shippingLabel">—</span>
+          <strong id="shippingCost">—</strong>
+        </div>
+        <p id="shippingNoteAndreani" style="color:var(--muted);font-size:12px;line-height:1.7;display:none;">
+          El costo exacto de este envío se confirmará por WhatsApp antes de que realices el pago.
+          <a id="wspShippingBtn" href="https://wa.me/5491173689423" target="_blank" rel="noopener"
+             style="display:inline-flex;align-items:center;gap:5px;margin-left:8px;padding:4px 10px;border:1px solid rgba(37,211,102,0.4);border-radius:6px;color:#25d366;font-size:11px;font-weight:600;letter-spacing:0.06em;text-decoration:none;vertical-align:middle;">
+            Consultar por WhatsApp
+          </a>
+        </p>
+        <p id="shippingNoteDidi" style="color:var(--muted);font-size:12px;line-height:1.7;display:none;">
+          Costo estimado entre $5.000 y $15.000 dependiendo la distancia, tomando Villa Devoto como punto de partida.
+        </p>
+      </div>
+
+      <!-- Contenido del pedido -->
       <div class="cart-summary__card">
         <h3>Contenido del pedido</h3>
         <div class="checkout-items" id="checkoutItems"></div>
       </div>
+
     </section>
 
     <aside class="cart-summary">
@@ -85,10 +115,22 @@
           <strong id="checkoutItemCount">0</strong>
         </div>
         <div class="cart-summary__line">
-          <span>Total a pagar</span>
+          <span>Subtotal</span>
           <strong id="checkoutTotal">$0</strong>
         </div>
-        <p class="cart-empty" id="checkoutEmpty">No hay productos en el carrito. Volvé a la tienda para seleccionar veladores.</p>
+        <div class="cart-summary__line" id="checkoutShippingLine" style="display:none;">
+          <span>Envío</span>
+          <strong id="checkoutShippingTotal">—</strong>
+        </div>
+        <div class="cart-summary__line" style="border-top:1px solid rgba(255,255,255,0.06);padding-top:16px;margin-top:4px;">
+          <span>Total</span>
+          <strong id="checkoutGrandTotal" style="color:var(--gold-light);">$0</strong>
+        </div>
+        <p class="cart-empty" id="checkoutEmpty" style="display:none;">No hay productos en el carrito.</p>
+        <button id="confirmBtn" class="btn-primary btn-full" style="border:none;cursor:pointer;margin-top:16px;">
+          Ir al pago →
+        </button>
+        <p id="confirmStatus" style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;display:none;">Registrando pedido...</p>
       </div>
     </aside>
   </div>
@@ -118,7 +160,7 @@
   </div>
   <div class="footer__bottom">
     <p>&copy; 2025 LUXTOM. Todos los derechos reservados.</p>
-    <p style="color: var(--muted); font-size:11px; letter-spacing:0.08em;">DISEÑO · LUZ · AMBIENTE</p>
+    <p style="color:var(--muted);font-size:11px;letter-spacing:0.08em;">DISEÑO · LUZ · AMBIENTE</p>
   </div>
 </footer>
 
@@ -129,115 +171,206 @@
 <script src="supabase-config.js"></script>
 <script src="admin-data.js"></script>
 <script src="carrito.js"></script>
-<script src="admin.js"></script>
 <script>
+  const CUSTOMER_KEY = 'LUXTOM_customer';
+  const SHIPPING_KEY = 'LUXTOM_shipping';
+
   document.getElementById('burger').addEventListener('click', () =>
     document.getElementById('navLinks').classList.toggle('open'));
 
   const scrollTopBtn = document.getElementById('scrollTopBtn');
   if (scrollTopBtn) {
-    scrollTopBtn.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   }
 
-  const proofInput = document.getElementById('paymentProofInput');
-  const proofPreview = document.getElementById('proofPreview');
-  const customerNameInput = document.getElementById('checkoutCustomerName');
-  const sendReceiptBtn = document.getElementById('sendReceiptBtn');
-  const orderIdDisplay = document.getElementById('orderIdDisplay');
-  const copyOrderIdBtn = document.getElementById('copyOrderIdBtn');
-  let proofDataUrl = null;
-  const currentOrderId = `pedido-${Date.now()}`;
-  if (orderIdDisplay) orderIdDisplay.textContent = currentOrderId;
-
-  if (copyOrderIdBtn) {
-    copyOrderIdBtn.addEventListener('click', () => {
-      if (!currentOrderId) return;
-      navigator.clipboard && navigator.clipboard.writeText(currentOrderId).then(() => {
-        copyOrderIdBtn.textContent = 'Copiado';
-        setTimeout(() => copyOrderIdBtn.textContent = 'Copiar', 1500);
-      }).catch(() => {
-        alert('No se pudo copiar automáticamente. Seleccioná el número y copia manualmente.');
-      });
-    });
+  function loadData(key) {
+    try { return JSON.parse(localStorage.getItem(key)) || null; } catch { return null; }
   }
 
-  if (proofInput) {
-    proofInput.addEventListener('change', async () => {
-      const file = proofInput.files && proofInput.files[0];
-      if (!file) {
-        proofDataUrl = null;
-        proofPreview.innerHTML = '';
+  function renderCustomerSummary() {
+    const c = loadData(CUSTOMER_KEY);
+    const el = document.getElementById('customerSummary');
+    if (!el) return;
+    if (!c) {
+      el.innerHTML = '<p style="color:#e07070;font-size:13px;">No se encontraron datos. <a href="datos-cliente.html" style="color:var(--gold);">Completá tus datos →</a></p>';
+      return;
+    }
+    el.innerHTML = `
+      <div class="customer-summary__row"><span>Nombre</span><strong>${c.nombre} ${c.apellido}</strong></div>
+      <div class="customer-summary__row"><span>Teléfono</span><strong>${c.telefono}</strong></div>
+      <div class="customer-summary__row"><span>Email</span><strong>${c.mail}</strong></div>
+      <div class="customer-summary__row"><span>Dirección</span><strong>${c.direccion}, ${c.ciudad}</strong></div>
+      <div class="customer-summary__row"><span>Provincia / CP</span><strong>${c.provincia} ${c.cp}</strong></div>
+    `;
+  }
+
+  function renderShippingSummary() {
+    const s = loadData(SHIPPING_KEY);
+    const labelEl      = document.getElementById('shippingLabel');
+    const costEl       = document.getElementById('shippingCost');
+    const noteAndreani = document.getElementById('shippingNoteAndreani');
+    const noteDidi     = document.getElementById('shippingNoteDidi');
+    const shippingLine  = document.getElementById('checkoutShippingLine');
+    const shippingTotal = document.getElementById('checkoutShippingTotal');
+
+    if (!s) {
+      if (labelEl) labelEl.textContent = 'No seleccionado';
+      if (costEl)  costEl.textContent  = '—';
+      return;
+    }
+
+    if (labelEl) labelEl.textContent = s.label || '—';
+    if (noteAndreani) noteAndreani.style.display = s.method === 'andreani' ? 'block' : 'none';
+    if (noteDidi)     noteDidi.style.display     = s.method === 'didi'     ? 'block' : 'none';
+
+    if (s.method === 'andreani') {
+      const c = loadData(CUSTOMER_KEY);
+      const direccion = c ? `${c.direccion}, ${c.ciudad}, ${c.provincia}` : '(no especificada)';
+      const cp        = c ? c.cp : '(no especificado)';
+      const msg = `Hola! Quiero consultar cuánto sale el envío por correo hasta:\nDirección: ${direccion}\nCódigo postal: ${cp}\nGracias!`;
+      const btn = document.getElementById('wspShippingBtn');
+      if (btn) btn.href = `https://wa.me/5491173689423?text=${encodeURIComponent(msg)}`;
+    }
+
+    if (s.pendiente || s.precio === null) {
+      if (costEl)        costEl.textContent        = 'A cotizar';
+      if (shippingLine)  shippingLine.style.display  = 'flex';
+      if (shippingTotal) shippingTotal.textContent = 'A cotizar';
+    } else if (s.precio === 0) {
+      if (costEl)        costEl.textContent        = 'Gratis';
+      if (shippingLine)  shippingLine.style.display  = 'flex';
+      if (shippingTotal) shippingTotal.textContent = 'Gratis';
+    } else {
+      const formatted = formatPrice(Math.round(s.precio));
+      if (costEl)        costEl.textContent        = formatted;
+      if (shippingLine)  shippingLine.style.display  = 'flex';
+      if (shippingTotal) shippingTotal.textContent = formatted;
+    }
+  }
+
+  function renderCheckoutItems() {
+    const items = cartItems();
+    const container = document.getElementById('checkoutItems');
+    const countEl   = document.getElementById('checkoutItemCount');
+    const totalEl   = document.getElementById('checkoutTotal');
+    if (!container) return;
+
+    if (!items.length) {
+      container.innerHTML = '<p style="color:var(--muted);font-size:13px;">No hay productos.</p>';
+      return;
+    }
+
+    container.innerHTML = items.map(item => {
+      const price = parsePrice(item.producto.precioDescuento || item.producto.precio);
+      return `<div class="checkout-item">
+        <div class="checkout-item__info">
+          <span class="checkout-item__name">${item.producto.nombre}</span>
+          <span class="checkout-item__qty">× ${item.qty}</span>
+        </div>
+        <span class="checkout-item__price">${formatPrice(price * item.qty)}</span>
+      </div>`;
+    }).join('');
+
+    if (countEl) countEl.textContent = items.reduce((acc, i) => acc + i.qty, 0);
+    if (totalEl) totalEl.textContent = formatPrice(cartSubtotal());
+  }
+
+  function renderGrandTotal() {
+    const s = loadData(SHIPPING_KEY);
+    const grandEl = document.getElementById('checkoutGrandTotal');
+    if (!grandEl) return;
+    const subtotal = cartSubtotal();
+    const shipping = (s && !s.pendiente && s.precio !== null) ? Math.round(s.precio) : 0;
+    grandEl.textContent = formatPrice(subtotal + shipping);
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const customer = loadData(CUSTOMER_KEY);
+    const items    = cartItems();
+    if (!customer || !customer.nombre) { window.location.href = 'datos-cliente.html'; return; }
+    if (!items.length) { window.location.href = 'cart.html'; return; }
+
+    renderCustomerSummary();
+    renderShippingSummary();
+    renderCheckoutItems();
+    renderGrandTotal();
+  });
+
+  // ─── CONFIRMAR PEDIDO ────────────────────────────────────────────
+  const confirmBtn    = document.getElementById('confirmBtn');
+  const confirmStatus = document.getElementById('confirmStatus');
+
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', async () => {
+      const customer = loadData(CUSTOMER_KEY);
+      const shipping = loadData(SHIPPING_KEY);
+      const items    = cartItems();
+
+      if (!items.length) { alert('El carrito está vacío.'); return; }
+      if (!customer || !customer.nombre) {
+        alert('Faltan datos del cliente.');
+        window.location.href = 'datos-cliente.html';
         return;
       }
 
-      proofDataUrl = await readFileAsDataURL(file);
-      proofPreview.innerHTML = `<img src="${proofDataUrl}" alt="Vista previa del comprobante" style="max-width:100%;border-radius:16px;border:1px solid rgba(255,255,255,0.12);">`;
-    });
-  }
+      confirmBtn.disabled      = true;
+      confirmBtn.textContent   = 'Guardando...';
+      confirmStatus.style.display = 'block';
 
-  if (sendReceiptBtn) {
-    sendReceiptBtn.addEventListener('click', async event => {
-      event.preventDefault();
-      const cliente = customerNameInput ? customerNameInput.value.trim() : '';
-      if (!cliente) {
-        alert('Por favor ingresa tu nombre o alias para que podamos identificar el pedido.');
-        customerNameInput.focus();
-        return;
-      }
-      const data = loadAdminData();
-      const items = cartItems();
-      if (!items.length) {
-        alert('El carrito está vacío. Agregá productos antes de enviar el pedido.');
-        return;
-      }
+      const orderId      = `pedido-${Date.now()}`;
+      const shippingCost = (shipping && !shipping.pendiente && shipping.precio !== null)
+        ? Math.round(shipping.precio) : 0;
+      const subtotal   = cartSubtotal();
+      const grandTotal = subtotal + shippingCost;
 
-      const orderId = currentOrderId || `pedido-${Date.now()}`;
       const order = {
-        id: orderId,
-        cliente,
-        productos: items.map(item => ({ id: item.id, cantidad: item.qty })),
-        total: formatPrice(cartSubtotal()),
-        estado: 'venta en proceso, esperando comprobante',
-        fecha: new Date().toLocaleDateString('es-AR'),
-        notas: '',
-        comprobante: proofDataUrl || null
+        id:          orderId,
+        cliente:     `${customer.nombre} ${customer.apellido}`,
+        telefono:    customer.telefono || '',
+        mail:        customer.mail || '',
+        direccion:   `${customer.direccion}, ${customer.ciudad}, ${customer.provincia} ${customer.cp}`,
+        codigo_postal: customer.cp || '',
+        metodo_envio: (shipping && shipping.label) || 'No especificado',
+        costo_envio:  (shipping && shipping.precio !== null && !shipping.pendiente) ? shippingCost : null,
+        productos:    items.map(item => ({ id: item.id, cantidad: item.qty })),
+        total:        formatPrice(grandTotal),
+        estado:       'venta en proceso, esperando comprobante',
+        fecha:        new Date().toLocaleDateString('es-AR'),
+        comprobante_url: null
       };
 
-      let savedOnSupabase = false;
       try {
-        if (typeof saveOrderToSupabase === 'function') {
-          const result = await saveOrderToSupabase(order);
-          savedOnSupabase = !!result;
-          if (savedOnSupabase) {
-            data.orders.push(order);
-            saveAdminData(data);
-          }
-        }
-      } catch (error) {
-        console.error('Error guardando en Supabase:', error);
-        savedOnSupabase = false;
+        await saveOrderToSupabase(order);
+      } catch (err) {
+        alert('Error al registrar el pedido:\n' + err.message);
+        confirmBtn.disabled    = false;
+        confirmBtn.textContent = 'Ir al pago →';
+        confirmStatus.style.display = 'none';
+        return;
       }
 
-      if (!savedOnSupabase) {
-        data.orders.push(order);
-        saveAdminData(data);
-      }
+      // Guardamos el resumen para pago.html
+      const orderSummary = {
+        id:       orderId,
+        cliente:  order.cliente,
+        mail:     order.mail,
+        items:    items.map(item => ({
+          nombre: item.producto.nombre,
+          qty:    item.qty,
+          precio: formatPrice(parsePrice(item.producto.precioDescuento || item.producto.precio))
+        })),
+        shipping:     shipping,
+        shippingCost: shippingCost,
+        subtotal:     formatPrice(subtotal),
+        grandTotal:   formatPrice(grandTotal)
+      };
+      sessionStorage.setItem('LUXTOM_lastOrder', JSON.stringify(orderSummary));
 
-      alert('Pedido guardado en el tablero. Si estás conectado a Internet, también se intentó sincronizar con Supabase. Después de enviar el comprobante, avisá por WhatsApp indicando tu nombre y el número de pedido.');
-      const message = `hola compre un producto mi nombre es ${cliente} y el numero de pedido es ${orderId}`;
-      const whatsappUrl = `https://wa.me/${SUPPORT_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-      window.location.href = whatsappUrl;
-    });
-  }
+      localStorage.removeItem('LUXTOM_cart');
+      localStorage.removeItem(SHIPPING_KEY);
+      localStorage.removeItem(CUSTOMER_KEY);
 
-  function readFileAsDataURL(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
+      window.location.href = 'pago.html';
     });
   }
 </script>

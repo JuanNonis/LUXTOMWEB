@@ -538,6 +538,221 @@ textarea {
   color: #e7eaed;
 }
 
+/* ── Nuevos estilos de formulario de producto ─────────────────── */
+
+.form-section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  margin-bottom: 2px;
+  padding: 8px 0 6px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  color: #7a8caa;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Precio */
+.price-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.price-prefix {
+  padding: 0 12px;
+  color: #8c73ff;
+  font-weight: 600;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+.price-input-wrapper input {
+  flex: 1;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 13px 14px 13px 0;
+}
+
+/* Descuento toggle */
+.discount-toggle-wrapper {
+  margin: 4px 0;
+}
+.discount-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  color: #b0baca;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+.discount-toggle-btn #discountToggleIcon {
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+.discount-toggle-btn.active {
+  background: rgba(140,115,255,0.15);
+  border-color: rgba(140,115,255,0.5);
+  color: #c4b5ff;
+}
+.discount-toggle-btn.active #discountToggleIcon {
+  color: #8dffb0;
+}
+
+.discount-section {
+  margin-top: 10px;
+  padding: 14px 16px;
+  background: rgba(140,115,255,0.06);
+  border: 1px solid rgba(140,115,255,0.2);
+  border-radius: 16px;
+  display: grid;
+  gap: 10px;
+}
+.pct-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.pct-input-wrapper input {
+  flex: 1;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 13px 14px;
+}
+.pct-suffix {
+  padding: 0 14px;
+  color: #8c73ff;
+  font-weight: 600;
+}
+.discount-preview {
+  display: none;
+  padding: 10px 14px;
+  background: rgba(141,255,176,0.08);
+  border: 1px solid rgba(141,255,176,0.2);
+  border-radius: 12px;
+  color: #8dffb0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* File picker */
+.file-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.file-input-row input[type="text"] {
+  flex: 1;
+}
+.file-picker-btn {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  color: #e8eff9;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.file-picker-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* Featured toggle */
+.toggle-field {
+  display: grid;
+  gap: 8px;
+}
+.field-label {
+  color: #e7eaed;
+  font-size: 0.95rem;
+}
+.feature-toggle-btn {
+  padding: 11px 16px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  color: #8b97ab;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+.feature-toggle-btn.active {
+  background: rgba(255,200,50,0.12);
+  border-color: rgba(255,200,50,0.4);
+  color: #ffd966;
+}
+
+/* Dynamic lists (specs & features) */
+.dynamic-list {
+  display: grid;
+  gap: 8px;
+}
+.dynamic-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.dynamic-item input {
+  flex: 1;
+  padding: 10px 12px !important;
+  border-radius: 12px !important;
+  font-size: 0.9rem;
+}
+.icon-input {
+  flex: 0 0 60px !important;
+  text-align: center;
+}
+.remove-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255,80,80,0.12);
+  color: #ff8080;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.remove-btn:hover {
+  background: rgba(255,80,80,0.22);
+}
+.add-field-btn {
+  padding: 5px 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  color: #8f9cb4;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.add-field-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: #e0e6f0;
+}
+
 @media (max-width: 960px) {
   .admin-header {
     grid-template-columns: 1fr;

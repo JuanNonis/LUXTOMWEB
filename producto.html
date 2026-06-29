@@ -279,7 +279,7 @@ function renderProducto(p, productoId) {
     vid.preload = 'metadata';
 
     const source = document.createElement('source');
-    source.src = encodeURI(p.video.src);
+    source.src = p.video.src;
     source.type = 'video/mp4';
     vid.appendChild(source);
 

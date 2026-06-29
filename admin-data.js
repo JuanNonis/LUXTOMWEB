@@ -92,13 +92,49 @@ async function fetchSupabaseOrders() {
   return (data || []).map(row => ({
     id: row.id,
     cliente: row.cliente,
+    telefono: row.telefono || '',
+    mail: row.mail || '',
+    direccion: row.direccion || '',
+    codigo_postal: row.codigo_postal || '',
+    metodo_envio: row.metodo_envio || '',
+    costo_envio: row.costo_envio ?? null,
     productos: row.productos || [],
     total: row.total,
     estado: row.estado,
     fecha: row.fecha,
-    notas: row.notas,
-    comprobante: row.comprobante
+    comprobante_url: row.comprobante_url || null
   }));
+}
+
+async function uploadFileToStorage(orderId, file) {
+  const client = getSupabaseClient();
+  if (!client) throw new Error('No hay cliente Supabase disponible.');
+
+  const ext = file.name.split('.').pop() || 'jpg';
+  const path = `${orderId}/comprobante.${ext}`;
+
+  const { error: uploadError } = await client.storage
+    .from('comprobantes')
+    .upload(path, file, { upsert: true });
+
+  if (uploadError) throw new Error('Storage: ' + uploadError.message);
+
+  const { data: urlData } = client.storage.from('comprobantes').getPublicUrl(path);
+  return urlData.publicUrl;
+}
+
+async function uploadComprobanteToStorage(orderId, file) {
+  const url = await uploadFileToStorage(orderId, file);
+
+  const client = getSupabaseClient();
+  const { error: updateError } = await client
+    .from('orders')
+    .update({ comprobante_url: url })
+    .eq('id', orderId);
+
+  if (updateError) throw new Error('Supabase: ' + updateError.message);
+
+  return url;
 }
 
 async function fetchSupabaseProducts() {
@@ -137,15 +173,23 @@ async function saveOrderToSupabase(order) {
   }
 
   const numericTotal = Number(String(order.total).replace(/[^0-9]/g, '')) || 0;
+  const numericShipping = (order.costo_envio !== null && order.costo_envio !== undefined)
+    ? Number(order.costo_envio) || 0
+    : null;
   const row = {
     id: order.id,
     cliente: order.cliente,
+    telefono: order.telefono || null,
+    mail: order.mail || null,
+    direccion: order.direccion || null,
+    codigo_postal: order.codigo_postal || null,
+    metodo_envio: order.metodo_envio || null,
+    costo_envio: numericShipping,
     productos: order.productos,
     total: numericTotal,
     estado: order.estado,
     fecha: order.fecha,
-    notas: order.notas,
-    comprobante: order.comprobante
+    comprobante_url: order.comprobante_url || null
   };
 
   // Evitar enviar columnas vacías (p. ej. 'notas' inexistente en la tabla)
@@ -180,8 +224,8 @@ async function saveOrderToSupabase(order) {
   console.log('Supabase saveOrderToSupabase', { row, sanitized, data, error });
 
   if (error) {
-    console.error('Error al guardar el pedido en Supabase:', error);
-    return null;
+    const msg = error.message || error.details || JSON.stringify(error);
+    throw new Error('Supabase: ' + msg);
   }
 
   return (Array.isArray(data) && data[0]) ? data[0] : order;
@@ -201,8 +245,17 @@ async function saveProductToSupabase(product) {
     coleccion: product.coleccion,
     stock: product.stock,
     imagenes: product.imagenes,
-    videos: product.videos,
-    descripcion: product.descripcion
+    videos: product.videos || [],
+    descripcion: product.descripcion,
+    desc_corta: product.descCorta || null,
+    desc_larga: product.descLarga || null,
+    specs: product.specs || [],
+    features: product.features || [],
+    badge: product.badge || null,
+    featured: product.featured || false,
+    lamp_clase: product.lampClase || null,
+    whatsapp: product.whatsapp || null,
+    video: product.video || null
   };
   const { error } = await client.from('products').upsert([row], { onConflict: 'id' });
   if (error) {

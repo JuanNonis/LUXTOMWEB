@@ -88,50 +88,122 @@
             <h3 id="productFormTitle">Agregar producto</h3>
             <form id="productForm" class="admin-form">
               <input type="hidden" id="productId">
+
+              <!-- ── BÁSICO ── -->
+              <div class="form-section-label">Información básica</div>
+              <label>Nombre<input type="text" id="productName" required></label>
+              <label>Tagline<input type="text" id="productTagline"></label>
+              <div class="form-row-2">
+                <label>Categoría<select id="productCategory" required></select></label>
+                <label>Colección<select id="productCollection" required></select></label>
+              </div>
+              <div class="form-row-2">
+                <label>Stock<input type="number" id="productStock" min="0" step="1" value="0"></label>
+                <div class="toggle-field">
+                  <span class="field-label">¿Aparece en "Nuestros favoritos"?</span>
+                  <button type="button" id="featuredToggle" class="feature-toggle-btn">No destacado</button>
+                  <input type="hidden" id="productFeatured" value="false">
+                </div>
+              </div>
+              <div id="badgeFields" style="display:none">
+                <div class="form-row-2">
+                  <label>Badge texto<input type="text" id="productBadgeText" placeholder="Nuevo"></label>
+                  <label>Badge clase
+                    <select id="productBadgeClass">
+                      <option value="">Sin badge</option>
+                      <option value="badge--new">badge--new (azul)</option>
+                      <option value="badge--hot">badge--hot (naranja)</option>
+                      <option value="badge--sale">badge--sale (verde)</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+
+              <!-- ── PRECIO Y DESCUENTO ── -->
+              <div class="form-section-label">Precio</div>
               <label>
-                Nombre
-                <input type="text" id="productName" required>
+                Precio (solo el número)
+                <div class="price-input-wrapper">
+                  <span class="price-prefix">$</span>
+                  <input type="number" id="productPrice" placeholder="20000" min="0" step="100" required>
+                </div>
               </label>
+
+              <div class="discount-toggle-wrapper">
+                <button type="button" id="discountToggleBtn" class="discount-toggle-btn">
+                  <span id="discountToggleIcon">＋</span> Tiene descuento
+                </button>
+                <input type="hidden" id="productDiscount" value="false">
+              </div>
+              <div id="discountSection" class="discount-section" style="display:none">
+                <label>
+                  Porcentaje de descuento
+                  <div class="pct-input-wrapper">
+                    <input type="number" id="productDiscountPct" placeholder="25" min="1" max="99" step="1">
+                    <span class="pct-suffix">%</span>
+                  </div>
+                </label>
+                <div class="discount-preview" id="discountPreview"></div>
+              </div>
+
+              <!-- ── IMÁGENES Y VIDEO ── -->
+              <div class="form-section-label">Imágenes y video</div>
               <label>
-                Tagline
-                <input type="text" id="productTagline" required>
+                Imágenes (rutas separadas por coma)
+                <div class="file-input-row">
+                  <input type="text" id="productImages" placeholder="LUXTOM/IMG_0029.jpeg, ...">
+                  <button type="button" class="file-picker-btn" id="imagePickerBtn">📁</button>
+                  <input type="file" id="imageFileInput" accept="image/*" multiple style="display:none">
+                </div>
               </label>
-              <label>
-                Precio
-                <input type="text" id="productPrice" placeholder="$20.000" required>
+              <label>Tipo de video
+                <select id="productVideoType">
+                  <option value="">Sin video</option>
+                  <option value="local">Local (.mp4)</option>
+                  <option value="youtube">YouTube</option>
+                </select>
               </label>
-              <label class="checkbox-label">
-                <input type="checkbox" id="productDiscount">
-                Tiene descuento
-              </label>
-              <label>
-                Precio con descuento
-                <input type="text" id="productPriceDiscount" placeholder="$17.400">
-              </label>
-              <label>
-                Categoría
-                <select id="productCategory" required></select>
-              </label>
-              <label>
-                Colección
-                <select id="productCollection" required></select>
-              </label>
-              <label>
-                Stock
-                <input type="number" id="productStock" min="0" step="1" value="0" required>
-              </label>
-              <label>
-                Imágenes (URLs separadas por coma)
-                <input type="text" id="productImages" placeholder="LUXTOM/IMG_0029.jpeg, ...">
-              </label>
-              <label>
-                Videos (URLs separadas por coma)
-                <input type="text" id="productVideos" placeholder="LUXTOM/videos/clip.mp4, https://...">
-              </label>
-              <label>
-                Descripción
-                <textarea id="productDescription" rows="4"></textarea>
-              </label>
+              <div id="videoLocalFields" style="display:none">
+                <label>
+                  Ruta del video (.mp4)
+                  <div class="file-input-row">
+                    <input type="text" id="productVideoSrc" placeholder="LUXTOM/videos/clip.mp4">
+                    <button type="button" class="file-picker-btn" id="videoPickerBtn">📁</button>
+                    <input type="file" id="videoFileInput" accept="video/*" style="display:none">
+                  </div>
+                </label>
+                <label>
+                  Portada del video (imagen previa)
+                  <div class="file-input-row">
+                    <input type="text" id="productVideoPoster" placeholder="LUXTOM/portada.jpg">
+                    <button type="button" class="file-picker-btn" id="posterPickerBtn">📁</button>
+                    <input type="file" id="posterFileInput" accept="image/*" style="display:none">
+                  </div>
+                </label>
+              </div>
+              <div id="videoYoutubeFields" style="display:none">
+                <label>ID de YouTube<input type="text" id="productVideoId" placeholder="dQw4w9WgXcQ"></label>
+              </div>
+
+              <!-- ── DESCRIPCIONES ── -->
+              <div class="form-section-label">Descripciones</div>
+              <label>Descripción corta<textarea id="productDescCorta" rows="3" placeholder="Un velador moderno y minimalista..."></textarea></label>
+              <label>Descripción larga (HTML permitido)<textarea id="productDescLarga" rows="5" placeholder="El &lt;strong&gt;Velador TOM&lt;/strong&gt; nace de..."></textarea></label>
+
+              <!-- ── SPECS ── -->
+              <div class="form-section-label">
+                Especificaciones
+                <button type="button" id="addSpecBtn" class="add-field-btn">＋ Agregar</button>
+              </div>
+              <div id="specsList" class="dynamic-list"></div>
+
+              <!-- ── FEATURES ── -->
+              <div class="form-section-label">
+                Características (feature cards)
+                <button type="button" id="addFeatureBtn" class="add-field-btn">＋ Agregar</button>
+              </div>
+              <div id="featuresList" class="dynamic-list"></div>
+
               <div class="admin-form-actions">
                 <button type="submit" class="btn-primary">Guardar producto</button>
                 <button type="button" id="cancelProductBtn" class="btn-ghost">Cancelar</button>

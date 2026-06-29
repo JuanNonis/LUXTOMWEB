@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Datos de entrega — LUXTOM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav__logo">LUXTOM</a>
+  <ul class="nav__links" id="navLinks">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="index.html#contacto">Contacto</a></li>
+    <li><a href="cart.html" class="nav__cart-link">Carrito <span class="cart-badge" id="navCartCount">0</span></a></li>
+    <li><a href="shop.html" class="nav__cta">Ver colección</a></li>
+  </ul>
+  <button class="nav__burger" id="burger" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- PROGRESS BAR -->
+<div class="checkout-steps-wrapper">
+  <div class="checkout-steps">
+    <div class="checkout-step done">
+      <div class="checkout-step__num">✓</div>
+      <span class="checkout-step__label">Carrito</span>
+    </div>
+    <div class="checkout-step__bar done"></div>
+    <div class="checkout-step active">
+      <div class="checkout-step__num">2</div>
+      <span class="checkout-step__label">Datos</span>
+    </div>
+    <div class="checkout-step__bar"></div>
+    <div class="checkout-step">
+      <div class="checkout-step__num">3</div>
+      <span class="checkout-step__label">Envío</span>
+    </div>
+    <div class="checkout-step__bar"></div>
+    <div class="checkout-step">
+      <div class="checkout-step__num">4</div>
+      <span class="checkout-step__label">Confirmar</span>
+    </div>
+    <div class="checkout-step__bar"></div>
+    <div class="checkout-step">
+      <div class="checkout-step__num">5</div>
+      <span class="checkout-step__label">Pago</span>
+    </div>
+  </div>
+</div>
+
+<main class="customer-form-page">
+  <div class="customer-form-layout">
+
+    <section class="form-card">
+      <h2>Datos de entrega</h2>
+      <p style="color:var(--muted);font-size:14px;margin-top:-8px;">Completá tus datos para continuar con el pedido.</p>
+
+      <form id="customerForm" novalidate>
+
+        <div class="form-row" style="gap:16px;margin-bottom:16px;">
+          <div class="form-group">
+            <label for="inputNombre">Nombre</label>
+            <input type="text" id="inputNombre" placeholder="Juan" required autocomplete="given-name">
+          </div>
+          <div class="form-group">
+            <label for="inputApellido">Apellido</label>
+            <input type="text" id="inputApellido" placeholder="García" required autocomplete="family-name">
+          </div>
+        </div>
+
+        <div class="form-row" style="gap:16px;margin-bottom:16px;">
+          <div class="form-group">
+            <label for="inputTelefono">Teléfono</label>
+            <input type="tel" id="inputTelefono" placeholder="+54 11 1234-5678" required autocomplete="tel">
+          </div>
+          <div class="form-group">
+            <label for="inputMail">Email</label>
+            <input type="email" id="inputMail" placeholder="tu@email.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:16px;">
+          <label for="inputDireccion">Dirección (calle y número)</label>
+          <input type="text" id="inputDireccion" placeholder="Av. Corrientes 1234, piso 3, depto A" required autocomplete="street-address">
+        </div>
+
+        <div class="form-row" style="gap:16px;margin-bottom:16px;">
+          <div class="form-group">
+            <label for="inputCiudad">Ciudad / Localidad</label>
+            <input type="text" id="inputCiudad" placeholder="Buenos Aires" required autocomplete="address-level2">
+          </div>
+          <div class="form-group">
+            <label for="inputProvincia">Provincia</label>
+            <select id="inputProvincia" required autocomplete="address-level1">
+              <option value="">Seleccioná...</option>
+              <option>Buenos Aires</option>
+              <option>CABA</option>
+              <option>Catamarca</option>
+              <option>Chaco</option>
+              <option>Chubut</option>
+              <option>Córdoba</option>
+              <option>Corrientes</option>
+              <option>Entre Ríos</option>
+              <option>Formosa</option>
+              <option>Jujuy</option>
+              <option>La Pampa</option>
+              <option>La Rioja</option>
+              <option>Mendoza</option>
+              <option>Misiones</option>
+              <option>Neuquén</option>
+              <option>Río Negro</option>
+              <option>Salta</option>
+              <option>San Juan</option>
+              <option>San Luis</option>
+              <option>Santa Cruz</option>
+              <option>Santa Fe</option>
+              <option>Santiago del Estero</option>
+              <option>Tierra del Fuego</option>
+              <option>Tucumán</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="max-width:200px;margin-bottom:8px;">
+          <label for="inputCP">Código postal</label>
+          <input type="text" id="inputCP" placeholder="1425" required autocomplete="postal-code" maxlength="8" pattern="[0-9A-Za-z]{4,8}">
+        </div>
+
+        <p id="formError" style="color:#e07070;font-size:13px;display:none;">Por favor completá todos los campos antes de continuar.</p>
+
+        <button type="submit" class="btn-primary btn-full" style="margin-top:8px;border:none;cursor:pointer;">
+          Continuar al envío →
+        </button>
+      </form>
+    </section>
+
+    <aside>
+      <div class="mini-summary">
+        <h2>Tu pedido</h2>
+        <div class="mini-summary__items" id="miniItems">
+          <p style="color:var(--muted);font-size:13px;">Cargando...</p>
+        </div>
+        <div class="mini-summary__total">
+          <span>Total productos</span>
+          <span id="miniTotal">$0</span>
+        </div>
+        <a href="cart.html" class="btn-ghost" style="text-align:center;justify-content:center;">← Editar carrito</a>
+      </div>
+    </aside>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <a href="index.html" class="nav__logo">LUXTOM</a>
+      <p>Veladores de diseño exclusivo. Cada pieza pensada para transformar tu espacio con luz y estilo.</p>
+    </div>
+    <div class="footer__col">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="shop.html">Shop</a></li>
+      </ul>
+    </div>
+    <div class="footer__col">
+      <h4>Contacto</h4>
+      <ul>
+        <li><a href="https://wa.me/5491173689423">WhatsApp</a></li>
+        <li><a href="https://www.instagram.com/luxtom3d/">Instagram</a></li>
+        <li><a href="mailto:luxtomilum@gmail.com">Email</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <p>&copy; 2025 LUXTOM. Todos los derechos reservados.</p>
+    <p style="color:var(--muted);font-size:11px;letter-spacing:0.08em;">DISEÑO · LUZ · AMBIENTE</p>
+  </div>
+</footer>
+
+<script src="productos.js"></script>
+<script src="carrito.js"></script>
+<script>
+  const CUSTOMER_KEY = 'LUXTOM_customer';
+
+  document.getElementById('burger').addEventListener('click', () =>
+    document.getElementById('navLinks').classList.toggle('open'));
+
+  // Pre-fill if the user already filled data before
+  window.addEventListener('DOMContentLoaded', () => {
+    const saved = (() => { try { return JSON.parse(localStorage.getItem(CUSTOMER_KEY)) || {}; } catch { return {}; } })();
+    if (saved.nombre)    document.getElementById('inputNombre').value    = saved.nombre;
+    if (saved.apellido)  document.getElementById('inputApellido').value  = saved.apellido;
+    if (saved.telefono)  document.getElementById('inputTelefono').value  = saved.telefono;
+    if (saved.mail)      document.getElementById('inputMail').value      = saved.mail;
+    if (saved.direccion) document.getElementById('inputDireccion').value = saved.direccion;
+    if (saved.ciudad)    document.getElementById('inputCiudad').value    = saved.ciudad;
+    if (saved.provincia) document.getElementById('inputProvincia').value = saved.provincia;
+    if (saved.cp)        document.getElementById('inputCP').value        = saved.cp;
+
+    renderMiniSummary();
+
+    // If cart is empty, redirect back
+    if (!cartItems().length) window.location.href = 'cart.html';
+  });
+
+  function renderMiniSummary() {
+    const items = cartItems();
+    const container = document.getElementById('miniItems');
+    const totalEl   = document.getElementById('miniTotal');
+    if (!container) return;
+
+    if (!items.length) {
+      container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Carrito vacío</p>';
+      return;
+    }
+
+    container.innerHTML = items.map(item => {
+      const price = parsePrice(item.producto.precioDescuento || item.producto.precio);
+      return `<div class="mini-summary__item">
+        <strong>${item.producto.nombre}</strong>
+        <span>${item.qty} × ${formatPrice(price)}</span>
+      </div>`;
+    }).join('');
+
+    if (totalEl) totalEl.textContent = formatPrice(cartSubtotal());
+  }
+
+  document.getElementById('customerForm').addEventListener('submit', e => {
+    e.preventDefault();
+
+    const nombre    = document.getElementById('inputNombre').value.trim();
+    const apellido  = document.getElementById('inputApellido').value.trim();
+    const telefono  = document.getElementById('inputTelefono').value.trim();
+    const mail      = document.getElementById('inputMail').value.trim();
+    const direccion = document.getElementById('inputDireccion').value.trim();
+    const ciudad    = document.getElementById('inputCiudad').value.trim();
+    const provincia = document.getElementById('inputProvincia').value;
+    const cp        = document.getElementById('inputCP').value.trim();
+
+    const errorEl = document.getElementById('formError');
+
+    if (!nombre || !apellido || !telefono || !mail || !direccion || !ciudad || !provincia || !cp) {
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    errorEl.style.display = 'none';
+
+    localStorage.setItem(CUSTOMER_KEY, JSON.stringify({ nombre, apellido, telefono, mail, direccion, ciudad, provincia, cp }));
+
+    window.location.href = 'envio.html';
+  });
+</script>
+</body>
+</html>
