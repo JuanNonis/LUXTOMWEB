@@ -7,7 +7,9 @@ const supabaseNamespace = (typeof supabase !== 'undefined' && supabase && typeof
     ? Supabase
     : null;
 
-localStorage.removeItem('sb-benrpugnnnrlopflishl-auth-token');
+try {
+  Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k));
+} catch {}
 
 const supabaseClient = supabaseNamespace
   ? supabaseNamespace.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {

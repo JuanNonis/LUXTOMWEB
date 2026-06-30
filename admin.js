@@ -918,3 +918,10 @@ function deleteUser(username) {
 }
 
 window.addEventListener('DOMContentLoaded', initAdminPage);
+setTimeout(() => {
+  if (document.body.style.visibility !== 'visible') {
+    const page = document.body.dataset.adminPage;
+    if (page === 'dashboard') location.replace('admin-login.html');
+    else document.body.style.visibility = 'visible';
+  }
+}, 4000);
