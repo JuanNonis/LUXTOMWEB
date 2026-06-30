@@ -259,6 +259,50 @@ async function saveProductToSupabase(product) {
   return product;
 }
 
+async function fetchSupabaseCollections() {
+  const client = getSupabaseClient();
+  if (!client) return null;
+  const { data, error } = await client.from('collections').select('name').order('name');
+  if (error) { console.error('Error al leer colecciones:', error); return null; }
+  return (data || []).map(r => r.name);
+}
+
+async function fetchSupabaseCategories() {
+  const client = getSupabaseClient();
+  if (!client) return null;
+  const { data, error } = await client.from('categories').select('name').order('name');
+  if (error) { console.error('Error al leer categorías:', error); return null; }
+  return (data || []).map(r => r.name);
+}
+
+async function saveCollectionToSupabase(name) {
+  const client = getSupabaseClient();
+  if (!client) return;
+  const { error } = await client.from('collections').upsert([{ name }], { onConflict: 'name' });
+  if (error) console.error('Error al guardar colección:', error);
+}
+
+async function saveCategoryToSupabase(name) {
+  const client = getSupabaseClient();
+  if (!client) return;
+  const { error } = await client.from('categories').upsert([{ name }], { onConflict: 'name' });
+  if (error) console.error('Error al guardar categoría:', error);
+}
+
+async function deleteCollectionFromSupabase(name) {
+  const client = getSupabaseClient();
+  if (!client) return;
+  const { error } = await client.from('collections').delete().eq('name', name);
+  if (error) console.error('Error al eliminar colección:', error);
+}
+
+async function deleteCategoryFromSupabase(name) {
+  const client = getSupabaseClient();
+  if (!client) return;
+  const { error } = await client.from('categories').delete().eq('name', name);
+  if (error) console.error('Error al eliminar categoría:', error);
+}
+
 async function deleteProductFromSupabase(productId) {
   const client = getSupabaseClient();
   if (!client) return null;

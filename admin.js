@@ -305,14 +305,22 @@ async function changeOrderStatus(orderId, nextStatus) {
 // ── Inventory ────────────────────────────────────────────────────
 async function renderInventory() {
   const data = loadAdminData();
-  const supabaseProducts = await fetchSupabaseProducts();
+  const [supabaseProducts, supabaseCollections, supabaseCategories] = await Promise.all([
+    fetchSupabaseProducts(),
+    fetchSupabaseCollections(),
+    fetchSupabaseCategories()
+  ]);
+
   let products = (supabaseProducts && Object.keys(supabaseProducts).length) ? supabaseProducts : data.products;
   if (!products || !Object.keys(products).length) products = ADMIN_DEFAULT_DATA.products;
 
-  renderCategoryList(data.categories);
-  renderCollectionList(data.collections);
+  const collections = (supabaseCollections && supabaseCollections.length) ? supabaseCollections : data.collections;
+  const categories = (supabaseCategories && supabaseCategories.length) ? supabaseCategories : data.categories;
+
+  renderCategoryList(categories);
+  renderCollectionList(collections);
   renderProductTable(products);
-  populateProductSelectors(data.categories, data.collections);
+  populateProductSelectors(categories, collections);
 }
 
 function renderCategoryList(categories) {
@@ -828,54 +836,66 @@ function attachPermissionsEvents() {
 }
 
 // ── Categories / Collections CRUD ───────────────────────────────
-function addCategory(value) {
+async function addCategory(value) {
   const data = loadAdminData();
   if (data.categories.includes(value)) { alert('La categoría ya existe.'); return; }
   data.categories.push(value);
   saveAdminData(data);
-  renderInventory();
+  await saveCategoryToSupabase(value);
+  await renderInventory();
 }
 
-function addCollection(value) {
+async function addCollection(value) {
   const data = loadAdminData();
   if (data.collections.includes(value)) { alert('La colección ya existe.'); return; }
   data.collections.push(value);
   saveAdminData(data);
-  renderInventory();
+  await saveCollectionToSupabase(value);
+  await renderInventory();
 }
 
-function updateCategory(oldValue, newValue) {
+async function updateCategory(oldValue, newValue) {
   const data = loadAdminData();
   if (data.categories.includes(newValue)) { alert('Ya existe otra categoría con ese nombre.'); return; }
   data.categories = data.categories.map(n => n === oldValue ? newValue : n);
   Object.values(data.products).forEach(p => { if (p.categoria === oldValue) p.categoria = newValue; });
   saveAdminData(data);
-  renderInventory();
+  await deleteCategoryFromSupabase(oldValue);
+  await saveCategoryToSupabase(newValue);
+  const client = getSupabaseClient();
+  if (client) await client.from('products').update({ categoria: newValue }).eq('categoria', oldValue);
+  await renderInventory();
 }
 
-function updateCollection(oldValue, newValue) {
+async function updateCollection(oldValue, newValue) {
   const data = loadAdminData();
   if (data.collections.includes(newValue)) { alert('Ya existe otra colección con ese nombre.'); return; }
   data.collections = data.collections.map(v => v === oldValue ? newValue : v);
   Object.values(data.products).forEach(p => { if (p.coleccion === oldValue) p.coleccion = newValue; });
   saveAdminData(data);
-  renderInventory();
+  await deleteCollectionFromSupabase(oldValue);
+  await saveCollectionToSupabase(newValue);
+  const client = getSupabaseClient();
+  if (client) await client.from('products').update({ coleccion: newValue }).eq('coleccion', oldValue);
+  await renderInventory();
 }
 
-function deleteCategory(name) {
+async function deleteCategory(name) {
   const data = loadAdminData();
   data.categories = data.categories.filter(c => c !== name);
   Object.values(data.products).forEach(p => { if (p.categoria === name) p.categoria = ''; });
   saveAdminData(data);
-  renderInventory();
+  await deleteCategoryFromSupabase(name);
+  await renderInventory();
 }
 
-function deleteCollection(name) {
+async function deleteCollection(name) {
   const data = loadAdminData();
   data.collections = data.collections.filter(c => c !== name);
   Object.values(data.products).forEach(p => { if (p.coleccion === name) p.coleccion = ''; });
   saveAdminData(data);
-  renderInventory();
+  await deleteCollectionFromSupabase(name);
+  await renderInventory();
 }
 
 // ── Users ────────────────────────────────────────────────────────
