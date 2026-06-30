@@ -13,6 +13,9 @@ const ORDER_STATUSES = [
 // ── Estado temporal del formulario de producto ──────────────────
 let productSpecs = [];
 let productFeatures = [];
+let cachedProducts = {};
+let cachedCategories = [];
+let cachedCollections = [];
 
 // ── Helpers de precio ───────────────────────────────────────────
 function formatAdminPrice(num) {
@@ -289,7 +292,7 @@ function closeOrderDetail() {
 
 function renderProductName(item) {
   const data = loadAdminData();
-  const product = data.products[item.id];
+  const product = cachedProducts[item.id] || data.products[item.id];
   return product ? product.nombre : item.id;
 }
 
@@ -317,6 +320,9 @@ async function renderInventory() {
   const collections = (supabaseCollections && supabaseCollections.length) ? supabaseCollections : data.collections;
   const categories = (supabaseCategories && supabaseCategories.length) ? supabaseCategories : data.categories;
 
+  cachedProducts = products;
+  cachedCategories = categories;
+  cachedCollections = collections;
   renderCategoryList(categories);
   renderCollectionList(collections);
   renderProductTable(products);
@@ -541,17 +547,13 @@ async function saveProduct() {
 
   if (!product.id) { alert('El nombre no es válido para generar un ID.'); return; }
 
-  if (idValue && data.products[idValue]) {
-    data.products[idValue] = product;
-  } else {
+  if (!idValue) {
     let finalId = product.id;
     let suffix = 1;
-    while (data.products[finalId]) finalId = `${product.id}-${suffix++}`;
+    while (cachedProducts[finalId]) finalId = `${product.id}-${suffix++}`;
     product.id = finalId;
-    data.products[finalId] = product;
   }
 
-  saveAdminData(data);
   await saveProductToSupabase(product);
   await renderInventory();
   resetProductForm();
@@ -614,7 +616,7 @@ function resetProductForm() {
 
 function editProduct(productId) {
   const data = loadAdminData();
-  const product = data.products[productId];
+  const product = cachedProducts[productId] || data.products[productId];
   if (!product) return;
 
   document.getElementById('productFormTitle').textContent = 'Editar producto';
@@ -701,9 +703,6 @@ function editProduct(productId) {
 }
 
 async function deleteProduct(productId) {
-  const data = loadAdminData();
-  delete data.products[productId];
-  saveAdminData(data);
   await deleteProductFromSupabase(productId);
   await renderInventory();
 }
@@ -837,29 +836,19 @@ function attachPermissionsEvents() {
 
 // ── Categories / Collections CRUD ───────────────────────────────
 async function addCategory(value) {
-  const data = loadAdminData();
-  if (data.categories.includes(value)) { alert('La categoría ya existe.'); return; }
-  data.categories.push(value);
-  saveAdminData(data);
+  if (cachedCategories.includes(value)) { alert('La categoría ya existe.'); return; }
   await saveCategoryToSupabase(value);
   await renderInventory();
 }
 
 async function addCollection(value) {
-  const data = loadAdminData();
-  if (data.collections.includes(value)) { alert('La colección ya existe.'); return; }
-  data.collections.push(value);
-  saveAdminData(data);
+  if (cachedCollections.includes(value)) { alert('La colección ya existe.'); return; }
   await saveCollectionToSupabase(value);
   await renderInventory();
 }
 
 async function updateCategory(oldValue, newValue) {
-  const data = loadAdminData();
-  if (data.categories.includes(newValue)) { alert('Ya existe otra categoría con ese nombre.'); return; }
-  data.categories = data.categories.map(n => n === oldValue ? newValue : n);
-  Object.values(data.products).forEach(p => { if (p.categoria === oldValue) p.categoria = newValue; });
-  saveAdminData(data);
+  if (cachedCategories.includes(newValue)) { alert('Ya existe otra categoría con ese nombre.'); return; }
   await deleteCategoryFromSupabase(oldValue);
   await saveCategoryToSupabase(newValue);
   const client = getSupabaseClient();
@@ -868,11 +857,7 @@ async function updateCategory(oldValue, newValue) {
 }
 
 async function updateCollection(oldValue, newValue) {
-  const data = loadAdminData();
-  if (data.collections.includes(newValue)) { alert('Ya existe otra colección con ese nombre.'); return; }
-  data.collections = data.collections.map(v => v === oldValue ? newValue : v);
-  Object.values(data.products).forEach(p => { if (p.coleccion === oldValue) p.coleccion = newValue; });
-  saveAdminData(data);
+  if (cachedCollections.includes(newValue)) { alert('Ya existe otra colección con ese nombre.'); return; }
   await deleteCollectionFromSupabase(oldValue);
   await saveCollectionToSupabase(newValue);
   const client = getSupabaseClient();
@@ -881,19 +866,11 @@ async function updateCollection(oldValue, newValue) {
 }
 
 async function deleteCategory(name) {
-  const data = loadAdminData();
-  data.categories = data.categories.filter(c => c !== name);
-  Object.values(data.products).forEach(p => { if (p.categoria === name) p.categoria = ''; });
-  saveAdminData(data);
   await deleteCategoryFromSupabase(name);
   await renderInventory();
 }
 
 async function deleteCollection(name) {
-  const data = loadAdminData();
-  data.collections = data.collections.filter(c => c !== name);
-  Object.values(data.products).forEach(p => { if (p.coleccion === name) p.coleccion = ''; });
-  saveAdminData(data);
   await deleteCollectionFromSupabase(name);
   await renderInventory();
 }
