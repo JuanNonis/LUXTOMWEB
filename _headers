@@ -1,0 +1,17 @@
+/admin.js
+  Cache-Control: no-cache, must-revalidate
+
+/admin-data.js
+  Cache-Control: no-cache, must-revalidate
+
+/admin.css
+  Cache-Control: no-cache, must-revalidate
+
+/supabase-config.js
+  Cache-Control: no-cache, must-revalidate
+
+/admin-login.html
+  Cache-Control: no-cache, must-revalidate
+
+/admin-dashboard.html
+  Cache-Control: no-cache, must-revalidate
