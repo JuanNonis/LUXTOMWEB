@@ -102,8 +102,8 @@ async function initDashboardPage() {
 }
 
 async function initLoginPage() {
+  const client = getSupabaseClient();
   try {
-    const client = getSupabaseClient();
     if (client) {
       const { data: { session } } = await client.auth.getSession();
       if (session) { location.replace('admin-dashboard.html'); return; }
