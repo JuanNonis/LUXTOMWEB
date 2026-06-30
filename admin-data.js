@@ -213,7 +213,7 @@ async function saveOrderToSupabase(order) {
   let data = null;
   let error = null;
   try {
-    const res = await client.from('orders').insert([sanitized]).select();
+    const res = await client.from('orders').insert([sanitized]);
     data = res.data || null;
     error = res.error || null;
   } catch (err) {
