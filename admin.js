@@ -47,35 +47,12 @@ function saveAdminData(data) {
   }
 }
 
-function getAdminSession() {
-  try {
-    return JSON.parse(localStorage.getItem(ADMIN_SESSION_KEY));
-  } catch {
-    return null;
-  }
-}
-
-function setAdminSession(user) {
-  localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(user));
-}
-
-function clearAdminSession() {
-  localStorage.removeItem(ADMIN_SESSION_KEY);
-}
-
-function requireAdminSession() {
-  const session = getAdminSession();
-  if (session) return session;
-
-  const data = loadAdminData();
-  const owner = data.users.find(user => user.role === 'owner');
-  if (owner) {
-    setAdminSession({ username: owner.username, role: owner.role });
-    return { username: owner.username, role: owner.role };
-  }
-
-  location.replace('admin-login.html');
-  return null;
+async function requireAdminSession() {
+  const client = getSupabaseClient();
+  if (!client) { location.replace('admin-login.html'); return null; }
+  const { data: { session } } = await client.auth.getSession();
+  if (!session) { location.replace('admin-login.html'); return null; }
+  return session;
 }
 
 // ── Init ────────────────────────────────────────────────────────
@@ -89,16 +66,19 @@ async function initAdminPage() {
 }
 
 async function initDashboardPage() {
-  const session = requireAdminSession();
+  const session = await requireAdminSession();
   if (!session) return;
+
+  document.body.style.visibility = 'visible';
 
   const userLabel = document.getElementById('adminUserLabel');
   const logoutBtn = document.getElementById('logoutBtn');
   const permissionsTab = document.getElementById('permissionsTab');
 
-  userLabel.textContent = `${session.username} · ${session.role}`;
-  logoutBtn.addEventListener('click', () => {
-    clearAdminSession();
+  userLabel.textContent = session.user.email;
+  logoutBtn.addEventListener('click', async () => {
+    const client = getSupabaseClient();
+    if (client) await client.auth.signOut();
     location.replace('admin-login.html');
   });
 
@@ -116,33 +96,39 @@ async function initDashboardPage() {
   attachPermissionsEvents();
 }
 
-function initLoginPage() {
-  const session = getAdminSession();
-  if (session) { location.replace('admin-dashboard.html'); return; }
+async function initLoginPage() {
+  const client = getSupabaseClient();
+  if (client) {
+    const { data: { session } } = await client.auth.getSession();
+    if (session) { location.replace('admin-dashboard.html'); return; }
+  }
+
+  document.body.style.visibility = 'visible';
 
   const form = document.getElementById('loginForm');
   const message = document.getElementById('loginMessage');
+  const btn = form.querySelector('button[type="submit"]');
 
-  form.addEventListener('submit', event => {
+  form.addEventListener('submit', async event => {
     event.preventDefault();
-    const username = document.getElementById('loginUsername').value.trim();
+    const email = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
-    const user = authenticateAdminUser(username, password);
 
-    if (!user) {
+    btn.disabled = true;
+    btn.textContent = 'Ingresando...';
+    message.textContent = '';
+
+    const { error } = await client.auth.signInWithPassword({ email, password });
+
+    if (error) {
       message.textContent = 'Usuario o contraseña incorrectos.';
       message.style.color = '#ff7d7d';
-      return;
+      btn.disabled = false;
+      btn.textContent = 'Ingresar';
+    } else {
+      location.replace('admin-dashboard.html');
     }
-
-    setAdminSession({ username: user.username, role: user.role });
-    location.replace('admin-dashboard.html');
   });
-}
-
-function authenticateAdminUser(username, password) {
-  const data = loadAdminData();
-  return data.users.find(u => u.username === username && u.password === password) || null;
 }
 
 function setActiveSection(sectionId) {
@@ -890,7 +876,7 @@ function deleteCollection(name) {
 function renderUsers() {
   const data = loadAdminData();
   const tbody = document.getElementById('userTableBody');
-  const session = getAdminSession();
+  const session = null;
 
   tbody.innerHTML = data.users.map(user => `
     <tr>

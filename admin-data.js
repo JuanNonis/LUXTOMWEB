@@ -68,13 +68,7 @@ const ADMIN_DEFAULT_DATA = {
       comprobante: null
     }
   ],
-  users: [
-    {
-      username: 'juanN',
-      password: 'Yrelpasion12',
-      role: 'owner'
-    }
-  ]
+  users: []
 };
 
 function getSupabaseClient() {
