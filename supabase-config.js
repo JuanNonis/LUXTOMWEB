@@ -8,7 +8,13 @@ const supabaseNamespace = (typeof supabase !== 'undefined' && supabase && typeof
     : null;
 
 const supabaseClient = supabaseNamespace
-  ? supabaseNamespace.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  ? supabaseNamespace.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        storage: typeof sessionStorage !== 'undefined' ? sessionStorage : localStorage,
+        persistSession: true,
+        autoRefreshToken: true
+      }
+    })
   : null;
 
 globalThis.supabase = supabaseClient;

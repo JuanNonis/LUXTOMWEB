@@ -48,11 +48,16 @@ function saveAdminData(data) {
 }
 
 async function requireAdminSession() {
-  const client = getSupabaseClient();
-  if (!client) { location.replace('admin-login.html'); return null; }
-  const { data: { session } } = await client.auth.getSession();
-  if (!session) { location.replace('admin-login.html'); return null; }
-  return session;
+  try {
+    const client = getSupabaseClient();
+    if (!client) { location.replace('admin-login.html'); return null; }
+    const { data: { session } } = await client.auth.getSession();
+    if (!session) { location.replace('admin-login.html'); return null; }
+    return session;
+  } catch {
+    location.replace('admin-login.html');
+    return null;
+  }
 }
 
 // ── Init ────────────────────────────────────────────────────────
@@ -97,12 +102,13 @@ async function initDashboardPage() {
 }
 
 async function initLoginPage() {
-  const client = getSupabaseClient();
-  if (client) {
-    const { data: { session } } = await client.auth.getSession();
-    if (session) { location.replace('admin-dashboard.html'); return; }
-  }
-
+  try {
+    const client = getSupabaseClient();
+    if (client) {
+      const { data: { session } } = await client.auth.getSession();
+      if (session) { location.replace('admin-dashboard.html'); return; }
+    }
+  } catch { }
   document.body.style.visibility = 'visible';
 
   const form = document.getElementById('loginForm');
