@@ -148,14 +148,10 @@
 
               <!-- ── IMÁGENES Y VIDEO ── -->
               <div class="form-section-label">Imágenes y video</div>
-              <label>
-                Imágenes (rutas separadas por coma)
-                <div class="file-input-row">
-                  <input type="text" id="productImages" placeholder="LUXTOM/IMG_0029.jpeg, ...">
-                  <button type="button" class="file-picker-btn" id="imagePickerBtn">📁</button>
-                  <input type="file" id="imageFileInput" accept="image/*" multiple style="display:none">
-                </div>
-              </label>
+              <div class="form-section-label" style="font-size:11px;opacity:0.6;margin-top:-8px;">Máx. 3 · La primera es la foto principal · Arrastrá para reordenar</div>
+              <div id="imageSlots" class="image-slots"></div>
+              <input type="file" id="imageFileInput" accept="image/*" style="display:none">
+              <input type="hidden" id="productImages">
               <label>Tipo de video
                 <select id="productVideoType">
                   <option value="">Sin video</option>

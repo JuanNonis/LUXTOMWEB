@@ -13,6 +13,7 @@ const ORDER_STATUSES = [
 // ── Estado temporal del formulario de producto ──────────────────
 let productSpecs = [];
 let productFeatures = [];
+let productImagesList = [];
 let cachedProducts = {};
 let cachedCategories = [];
 let cachedCollections = [];
@@ -99,6 +100,7 @@ async function initDashboardPage() {
   setActiveSection('boardSection');
   await renderBoard();
   await renderInventory();
+  renderImageSlots();
   renderUsers();
   attachInventoryEvents();
   attachPermissionsEvents();
@@ -513,8 +515,7 @@ async function saveProduct() {
 
   const whatsapp = `Hola! Me interesa el ${nombre} 💡`;
 
-  const imagenes = document.getElementById('productImages').value
-    .split(',').map(s => s.trim()).filter(Boolean);
+  const imagenes = [...productImagesList];
 
   // Video
   const videoType = document.getElementById('productVideoType').value;
@@ -596,7 +597,8 @@ function resetProductForm() {
   document.getElementById('productBadgeText').value = '';
   document.getElementById('productBadgeClass').value = '';
   document.getElementById('badgeFields').style.display = 'none';
-  document.getElementById('productImages').value = '';
+  productImagesList = [];
+  renderImageSlots();
   document.getElementById('productVideoType').value = '';
   document.getElementById('productVideoSrc').value = '';
   document.getElementById('productVideoPoster').value = '';
@@ -647,7 +649,8 @@ function editProduct(productId) {
   document.getElementById('productCategory').value = product.categoria;
   document.getElementById('productCollection').value = product.coleccion;
   document.getElementById('productStock').value = product.stock || 0;
-  document.getElementById('productImages').value = (product.imagenes || []).join(', ');
+  productImagesList = (product.imagenes || []).slice(0, 3);
+  renderImageSlots();
   document.getElementById('productDescCorta').value = product.descCorta || product.descripcion || '';
   document.getElementById('productDescLarga').value = product.descLarga || '';
 
@@ -725,6 +728,67 @@ function editProduct(productId) {
 async function deleteProduct(productId) {
   await deleteProductFromSupabase(productId);
   await renderInventory();
+}
+
+// ── Image slots ──────────────────────────────────────────────────
+function renderImageSlots() {
+  const container = document.getElementById('imageSlots');
+  if (!container) return;
+
+  let html = productImagesList.map((url, i) => `
+    <div class="image-slot has-image ${i === 0 ? 'is-main' : ''}" data-index="${i}" draggable="true">
+      ${i === 0 ? '<span class="slot-label">Principal</span>' : ''}
+      <img src="${url}" alt="Imagen ${i + 1}">
+      <button type="button" class="slot-delete" data-index="${i}">✕</button>
+    </div>`).join('');
+
+  if (productImagesList.length < 3) {
+    html += `
+      <div class="image-slot empty" data-index="${productImagesList.length}">
+        <button type="button" class="slot-add">
+          <span class="slot-add-icon">+</span>
+          <span class="slot-add-text">${productImagesList.length === 0 ? 'Foto principal' : 'Agregar foto'}</span>
+        </button>
+      </div>`;
+  }
+
+  container.innerHTML = html;
+  document.getElementById('productImages').value = productImagesList.join(', ');
+
+  container.querySelectorAll('.slot-delete').forEach(btn => {
+    btn.addEventListener('click', () => {
+      productImagesList.splice(Number(btn.dataset.index), 1);
+      renderImageSlots();
+    });
+  });
+
+  container.querySelectorAll('.slot-add').forEach(btn => {
+    btn.addEventListener('click', () => document.getElementById('imageFileInput').click());
+  });
+
+  let dragIndex = null;
+  container.querySelectorAll('.image-slot.has-image').forEach(slot => {
+    slot.addEventListener('dragstart', () => {
+      dragIndex = Number(slot.dataset.index);
+      slot.classList.add('dragging');
+    });
+    slot.addEventListener('dragend', () => {
+      slot.classList.remove('dragging');
+      dragIndex = null;
+    });
+    slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('drag-over'); });
+    slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+    slot.addEventListener('drop', e => {
+      e.preventDefault();
+      slot.classList.remove('drag-over');
+      const targetIndex = Number(slot.dataset.index);
+      if (dragIndex !== null && dragIndex !== targetIndex) {
+        const [moved] = productImagesList.splice(dragIndex, 1);
+        productImagesList.splice(targetIndex, 0, moved);
+        renderImageSlots();
+      }
+    });
+  });
 }
 
 // ── Events ───────────────────────────────────────────────────────
@@ -813,33 +877,23 @@ function attachInventoryEvents() {
     document.getElementById('imageFileInput').click();
   });
   document.getElementById('imageFileInput').addEventListener('change', async event => {
-    const files = Array.from(event.target.files);
-    if (!files.length) return;
+    const file = event.target.files[0];
+    if (!file || productImagesList.length >= 3) return;
 
-    const btn = document.getElementById('imagePickerBtn');
-    btn.textContent = '⏳';
-    btn.disabled = true;
+    const addBtn = document.getElementById('imageSlots').querySelector('.slot-add');
+    if (addBtn) { addBtn.disabled = true; addBtn.querySelector('.slot-add-icon').textContent = '⏳'; }
 
     const nombre = document.getElementById('productName').value.trim();
     const productId = document.getElementById('productId').value || (nombre ? createProductId(nombre) : `temp-${Date.now()}`);
 
-    const urls = [];
-    for (const file of files) {
-      try {
-        const url = await uploadProductImageToStorage(productId, file);
-        urls.push(url);
-      } catch (err) {
-        alert('Error al subir imagen: ' + err.message);
-      }
+    try {
+      const url = await uploadProductImageToStorage(productId, file);
+      productImagesList.push(url);
+    } catch (err) {
+      alert('Error al subir imagen: ' + err.message);
     }
 
-    if (urls.length) {
-      const current = document.getElementById('productImages').value.trim();
-      document.getElementById('productImages').value = current ? current + ', ' + urls.join(', ') : urls.join(', ');
-    }
-
-    btn.textContent = '📁';
-    btn.disabled = false;
+    renderImageSlots();
     event.target.value = '';
   });
 
