@@ -32,8 +32,9 @@ function cartItemCount(cart = getCart()) {
 }
 
 function cartItems(cart = getCart()) {
+  const _p = window._productosCache || PRODUCTOS;
   return Object.entries(cart)
-    .map(([id, qty]) => ({ id, qty: Number(qty), producto: PRODUCTOS[id] }))
+    .map(([id, qty]) => ({ id, qty: Number(qty), producto: _p[id] }))
     .filter(item => item.producto && item.qty > 0);
 }
 
@@ -53,7 +54,8 @@ function updateNavCartCount() {
 }
 
 function addToCart(id, amount = 1) {
-  const producto = PRODUCTOS[id];
+  const _p = window._productosCache || PRODUCTOS;
+  const producto = _p[id];
   if (!producto) return;
 
   const cart = getCart();

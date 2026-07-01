@@ -91,6 +91,8 @@
 
 <button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">↑</button>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
 <script src="productos.js"></script>
 <script src="carrito.js"></script>
 <script>
@@ -98,7 +100,6 @@
     document.getElementById('navLinks').classList.toggle('open'));
 
   const grid = document.getElementById('shopGrid');
-  grid.innerHTML = Object.entries(PRODUCTOS).map(([id, p]) => renderCard(id, p)).join('');
 
   const filterBtns = document.querySelectorAll('.filter-btn');
   const emptyMsg   = document.getElementById('emptyMsg');
@@ -121,6 +122,10 @@
       btn.classList.add('active');
       applyFilter(btn.dataset.filter);
     });
+  });
+
+  getProductos().then(productos => {
+    grid.innerHTML = Object.entries(productos).map(([id, p]) => renderCard(id, p)).join('');
   });
 
   const scrollTopBtn = document.getElementById('scrollTopBtn');

@@ -313,6 +313,44 @@ const PRODUCTOS = {
 };
 
 
+window._productosCache = null;
+
+async function getProductos() {
+  if (window._productosCache) return window._productosCache;
+  try {
+    const client = globalThis.supabase || null;
+    if (!client) { window._productosCache = PRODUCTOS; return window._productosCache; }
+    const { data, error } = await client.from('products').select('*');
+    if (error || !data || !data.length) { window._productosCache = PRODUCTOS; return window._productosCache; }
+    window._productosCache = data.reduce((acc, row) => {
+      acc[row.id] = {
+        nombre: row.nombre,
+        tagline: row.tagline,
+        precio: row.precio,
+        descuento: row.descuento,
+        precioDescuento: row.precio_descuento || null,
+        categoria: row.categoria,
+        coleccion: row.coleccion,
+        stock: row.stock,
+        imagenes: row.imagenes || [],
+        descCorta: row.desc_corta || row.descripcion || '',
+        descLarga: row.desc_larga || '',
+        specs: row.specs || [],
+        features: row.features || [],
+        badge: row.badge || null,
+        featured: row.featured || false,
+        lampClase: row.lamp_clase || '',
+        whatsapp: row.whatsapp || '',
+        video: row.video || null
+      };
+      return acc;
+    }, {});
+  } catch(e) {
+    window._productosCache = PRODUCTOS;
+  }
+  return window._productosCache;
+}
+
 /* ════ FUNCIÓN COMPARTIDA — Genera el HTML de una tarjeta de producto ════ */
 function renderCard(id, p) {
   const url  = `producto.html?id=${id}`;

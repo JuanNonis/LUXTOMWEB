@@ -109,6 +109,8 @@
 
 <button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">↑</button>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
 <script src="productos.js"></script>
 <script src="carrito.js"></script>
 <script>
@@ -305,14 +307,12 @@ function renderProducto(p, productoId) {
 // ── Init ──────────────────────────────────────────────────
 const params = new URLSearchParams(window.location.search);
 const id = params.get('id');
-const producto = PRODUCTOS[id];
 
-if (!producto) {
-  // ID inválido → volver al shop
-  window.location.href = 'shop.html';
-} else {
+getProductos().then(productos => {
+  const producto = productos[id];
+  if (!producto) { window.location.href = 'shop.html'; return; }
   renderProducto(producto, id);
-}
+});
 
 // Burger menu
 document.getElementById('burger')
