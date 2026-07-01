@@ -241,7 +241,8 @@ async function openOrderDetail(orderId) {
       <h3>Comprobante de pago</h3>
       <div id="proofImageWrap" style="margin-top:8px;">
         ${order.comprobante_url
-          ? `<img src="${order.comprobante_url}" alt="Comprobante" style="max-width:100%;border-radius:12px;border:1px solid rgba(255,255,255,0.06);margin-bottom:12px;">`
+          ? `<img src="${order.comprobante_url}" alt="Comprobante" style="max-width:100%;border-radius:12px;border:1px solid rgba(255,255,255,0.06);margin-bottom:12px;">
+             <button id="adminDeleteProofBtn" data-order-id="${order.id}" data-url="${order.comprobante_url}" class="btn-ghost" style="color:#ff7d7d;font-size:13px;margin-bottom:12px;">✕ Eliminar comprobante</button>`
           : '<p style="color:var(--muted);font-size:13px;margin-bottom:12px;">No se subió comprobante aún.</p>'}
       </div>
       <label for="adminProofInput" class="proof-upload-label" id="adminProofLabel" style="max-width:320px;">
@@ -256,6 +257,25 @@ async function openOrderDetail(orderId) {
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
   document.getElementById('closeOrderDetailBtn').addEventListener('click', closeOrderDetail);
+
+  const adminDeleteProofBtn = document.getElementById('adminDeleteProofBtn');
+  if (adminDeleteProofBtn) {
+    adminDeleteProofBtn.addEventListener('click', async () => {
+      if (!confirm('¿Eliminás el comprobante de Supabase? Asegurate de haberlo guardado en tu PC.')) return;
+      adminDeleteProofBtn.disabled = true;
+      adminDeleteProofBtn.textContent = 'Eliminando...';
+      try {
+        await deleteComprobanteFromStorage(adminDeleteProofBtn.dataset.orderId, adminDeleteProofBtn.dataset.url);
+        const wrap = document.getElementById('proofImageWrap');
+        if (wrap) wrap.innerHTML = '<p style="color:var(--muted);font-size:13px;margin-bottom:12px;">No se subió comprobante aún.</p>';
+        adminDeleteProofBtn.remove();
+      } catch (err) {
+        alert('Error al eliminar: ' + err.message);
+        adminDeleteProofBtn.disabled = false;
+        adminDeleteProofBtn.textContent = '✕ Eliminar comprobante';
+      }
+    });
+  }
 
   const adminProofInput = document.getElementById('adminProofInput');
   if (adminProofInput) {
@@ -792,12 +812,34 @@ function attachInventoryEvents() {
   document.getElementById('imagePickerBtn').addEventListener('click', () => {
     document.getElementById('imageFileInput').click();
   });
-  document.getElementById('imageFileInput').addEventListener('change', event => {
+  document.getElementById('imageFileInput').addEventListener('change', async event => {
     const files = Array.from(event.target.files);
     if (!files.length) return;
-    const names = files.map(f => 'LUXTOM/' + f.name);
-    const current = document.getElementById('productImages').value.trim();
-    document.getElementById('productImages').value = current ? current + ', ' + names.join(', ') : names.join(', ');
+
+    const btn = document.getElementById('imagePickerBtn');
+    btn.textContent = '⏳';
+    btn.disabled = true;
+
+    const nombre = document.getElementById('productName').value.trim();
+    const productId = document.getElementById('productId').value || (nombre ? createProductId(nombre) : `temp-${Date.now()}`);
+
+    const urls = [];
+    for (const file of files) {
+      try {
+        const url = await uploadProductImageToStorage(productId, file);
+        urls.push(url);
+      } catch (err) {
+        alert('Error al subir imagen: ' + err.message);
+      }
+    }
+
+    if (urls.length) {
+      const current = document.getElementById('productImages').value.trim();
+      document.getElementById('productImages').value = current ? current + ', ' + urls.join(', ') : urls.join(', ');
+    }
+
+    btn.textContent = '📁';
+    btn.disabled = false;
     event.target.value = '';
   });
 

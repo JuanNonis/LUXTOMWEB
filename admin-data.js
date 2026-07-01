@@ -100,21 +100,74 @@ async function fetchSupabaseOrders() {
   }));
 }
 
+function compressToWebP(file, quality = 0.78, maxDim = 1400) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        if (width > height) { height = Math.round(height * maxDim / width); width = maxDim; }
+        else { width = Math.round(width * maxDim / height); height = maxDim; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      URL.revokeObjectURL(url);
+      canvas.toBlob(blob => resolve(blob || file), 'image/webp', quality);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
+async function uploadProductImageToStorage(productId, file) {
+  const client = getSupabaseClient();
+  if (!client) throw new Error('No hay cliente Supabase disponible.');
+
+  const compressed = await compressToWebP(file, 0.65, 1000);
+  const path = `${productId}/${Date.now()}.webp`;
+
+  const { error: uploadError } = await client.storage
+    .from('productos')
+    .upload(path, compressed, { upsert: true, contentType: 'image/webp' });
+
+  if (uploadError) throw new Error('Storage: ' + uploadError.message);
+
+  const { data: urlData } = client.storage.from('productos').getPublicUrl(path);
+  return urlData.publicUrl;
+}
+
 async function uploadFileToStorage(orderId, file) {
   const client = getSupabaseClient();
   if (!client) throw new Error('No hay cliente Supabase disponible.');
 
-  const ext = file.name.split('.').pop() || 'jpg';
-  const path = `${orderId}/comprobante.${ext}`;
+  const compressed = await compressToWebP(file, 0.78);
+  const path = `${orderId}/comprobante.webp`;
 
   const { error: uploadError } = await client.storage
     .from('comprobantes')
-    .upload(path, file, { upsert: true });
+    .upload(path, compressed, { upsert: true, contentType: 'image/webp' });
 
   if (uploadError) throw new Error('Storage: ' + uploadError.message);
 
   const { data: urlData } = client.storage.from('comprobantes').getPublicUrl(path);
   return urlData.publicUrl;
+}
+
+async function deleteComprobanteFromStorage(orderId, url) {
+  const client = getSupabaseClient();
+  if (!client) throw new Error('No hay cliente Supabase disponible.');
+
+  const prefix = `${SUPABASE_URL}/storage/v1/object/public/comprobantes/`;
+  const path = url.replace(prefix, '');
+
+  const { error: storageError } = await client.storage.from('comprobantes').remove([path]);
+  if (storageError) throw new Error('Storage: ' + storageError.message);
+
+  const { error: dbError } = await client.from('orders').update({ comprobante_url: null }).eq('id', orderId);
+  if (dbError) throw new Error('Supabase: ' + dbError.message);
 }
 
 async function uploadComprobanteToStorage(orderId, file) {
