@@ -102,8 +102,10 @@ async function initDashboardPage() {
   await renderInventory();
   renderImageSlots();
   renderUsers();
+  await renderConfigSection();
   attachInventoryEvents();
   attachPermissionsEvents();
+  attachConfigEvents();
 }
 
 async function initLoginPage() {
@@ -1008,6 +1010,61 @@ function deleteUser(username) {
   data.users = data.users.filter(u => u.username !== username);
   saveAdminData(data);
   renderUsers();
+}
+
+// ── Config ───────────────────────────────────────────────────────
+async function renderConfigSection() {
+  const settings = await fetchSettings();
+  const type = settings['hero_video_type'] || 'local';
+  const src  = settings['hero_video_src']  || 'LUXTOM/veladoresjuntos.mp4';
+
+  const typeEl = document.getElementById('configVideoType');
+  if (typeEl) typeEl.value = type;
+
+  if (type === 'youtube') {
+    const idEl = document.getElementById('configVideoId');
+    if (idEl) idEl.value = src;
+    document.getElementById('configVideoLocalField').style.display = 'none';
+    document.getElementById('configVideoYoutubeField').style.display = 'block';
+  } else {
+    const srcEl = document.getElementById('configVideoSrc');
+    if (srcEl) srcEl.value = src;
+    document.getElementById('configVideoLocalField').style.display = 'block';
+    document.getElementById('configVideoYoutubeField').style.display = 'none';
+  }
+}
+
+function attachConfigEvents() {
+  const typeEl = document.getElementById('configVideoType');
+  if (typeEl) {
+    typeEl.addEventListener('change', () => {
+      const t = typeEl.value;
+      document.getElementById('configVideoLocalField').style.display  = t === 'local'   ? 'block' : 'none';
+      document.getElementById('configVideoYoutubeField').style.display = t === 'youtube' ? 'block' : 'none';
+    });
+  }
+
+  const form = document.getElementById('configHeroForm');
+  if (form) {
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const type = document.getElementById('configVideoType').value;
+      const src  = type === 'youtube'
+        ? document.getElementById('configVideoId').value.trim()
+        : document.getElementById('configVideoSrc').value.trim();
+
+      const statusEl = document.getElementById('configSaveStatus');
+      if (statusEl) { statusEl.textContent = 'Guardando...'; statusEl.style.color = '#8f9cb4'; }
+
+      try {
+        await saveSettingToSupabase('hero_video_type', type);
+        await saveSettingToSupabase('hero_video_src', src);
+        if (statusEl) { statusEl.textContent = '✓ Guardado. El cambio se verá la próxima vez que se cargue el inicio.'; statusEl.style.color = '#8dffb0'; }
+      } catch (err) {
+        if (statusEl) { statusEl.textContent = '✗ Error al guardar: ' + err.message; statusEl.style.color = '#ff7d7d'; }
+      }
+    });
+  }
 }
 
 window.addEventListener('DOMContentLoaded', initAdminPage);

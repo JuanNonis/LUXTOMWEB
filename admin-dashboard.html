@@ -24,6 +24,7 @@
       <button class="tab-btn active" data-target="boardSection">Pedidos</button>
       <button class="tab-btn" data-target="inventorySection">Inventario</button>
       <button class="tab-btn" data-target="permissionsSection" id="permissionsTab">Permisos</button>
+      <button class="tab-btn" data-target="configSection">Configuración</button>
     </nav>
 
     <div class="admin-actions">
@@ -283,6 +284,44 @@
       </div>
     </section>
   </main>
+
+    <section id="configSection" class="admin-panel">
+      <div class="admin-panel-header">
+        <div>
+          <span class="section-label">✦ Configuración</span>
+          <h1 class="section-title">Ajustes generales</h1>
+          <p class="section-sub">Controlá el video del hero y otros parámetros globales sin tocar el código.</p>
+        </div>
+      </div>
+
+      <div class="inventory-card inventory-full">
+        <div class="inventory-card-header">
+          <div>
+            <h2>Video del hero (inicio)</h2>
+            <p>El video que aparece como fondo en la pantalla principal de la web.</p>
+          </div>
+        </div>
+        <form id="configHeroForm" class="admin-form" style="max-width:560px;">
+          <label>Tipo de video
+            <select id="configVideoType">
+              <option value="local">Local (.mp4)</option>
+              <option value="youtube">YouTube (autoplay mudo)</option>
+            </select>
+          </label>
+          <div id="configVideoLocalField">
+            <label>Ruta del archivo .mp4<input type="text" id="configVideoSrc" placeholder="LUXTOM/veladoresjuntos.mp4"></label>
+          </div>
+          <div id="configVideoYoutubeField" style="display:none">
+            <label>ID de YouTube<input type="text" id="configVideoId" placeholder="dQw4w9WgXcQ"></label>
+            <p style="font-size:12px;color:#8f9cb4;margin:0;">Copiá solo el ID del video (lo que va después de <code>?v=</code>).</p>
+          </div>
+          <div class="admin-form-actions">
+            <button type="submit" class="btn-primary">Guardar configuración</button>
+          </div>
+          <p id="configSaveStatus" style="font-size:13px;color:var(--muted);margin-top:6px;min-height:20px;"></p>
+        </form>
+      </div>
+    </section>
 
   <div class="order-detail-modal hidden" id="orderDetailModal">
     <div class="order-detail-panel" id="orderDetailContent"></div>

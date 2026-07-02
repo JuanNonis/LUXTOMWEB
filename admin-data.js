@@ -193,19 +193,34 @@ async function fetchSupabaseProducts() {
     return null;
   }
   return (data || []).reduce((result, row) => {
+    const precioNum = Number(String(row.precio || '').replace(/[^0-9]/g, '')) || 0;
+    const descuentoNum = Number(String(row.precio_descuento || '').replace(/[^0-9]/g, '')) || 0;
+    const descuentoPct = (row.descuento && precioNum > 0 && descuentoNum > 0)
+      ? Math.round((1 - descuentoNum / precioNum) * 100) : 0;
+
     const product = {
       id: row.id,
       nombre: row.nombre,
-      tagline: row.tagline,
+      tagline: row.tagline || '',
       precio: row.precio,
-      descuento: row.descuento,
+      descuento: row.descuento || false,
+      descuentoPct,
       precioDescuento: row.precio_descuento || null,
       categoria: row.categoria,
       coleccion: row.coleccion,
       stock: row.stock,
       imagenes: row.imagenes || [],
       videos: row.videos || [],
-      descripcion: row.descripcion
+      descripcion: row.descripcion || '',
+      descCorta: row.desc_corta || row.descripcion || '',
+      descLarga: row.desc_larga || '',
+      specs: row.specs || [],
+      features: row.features || [],
+      badge: row.badge || null,
+      featured: row.featured || false,
+      lampClase: row.lamp_clase || '',
+      whatsapp: row.whatsapp || '',
+      video: row.video || null
     };
     result[product.id] = product;
     return result;
@@ -376,4 +391,19 @@ async function updateOrderStatusInSupabase(orderId, nextStatus) {
     return null;
   }
   return true;
+}
+
+async function fetchSettings() {
+  const client = getSupabaseClient();
+  if (!client) return {};
+  const { data, error } = await client.from('settings').select('*');
+  if (error) { console.error('Error al leer settings:', error); return {}; }
+  return (data || []).reduce((acc, row) => { acc[row.key] = row.value; return acc; }, {});
+}
+
+async function saveSettingToSupabase(key, value) {
+  const client = getSupabaseClient();
+  if (!client) return;
+  const { error } = await client.from('settings').upsert([{ key, value }], { onConflict: 'key' });
+  if (error) console.error('Error al guardar setting:', error);
 }
