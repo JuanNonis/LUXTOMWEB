@@ -831,6 +831,46 @@ textarea {
   color: #e0e6f0;
 }
 
+/* Emoji picker para features */
+.feature-item-wrap {
+  display: grid;
+  gap: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+}
+.feature-item-wrap:last-child {
+  border-bottom: none;
+}
+.emoji-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 6px 0 10px 0;
+}
+.emoji-opt {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  cursor: pointer;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  transition: background 0.15s, border-color 0.15s;
+}
+.emoji-opt:hover {
+  background: rgba(255,255,255,0.12);
+}
+.emoji-opt.selected {
+  background: rgba(140,115,255,0.2);
+  border-color: rgba(140,115,255,0.5);
+}
+
 @media (max-width: 960px) {
   .admin-header {
     grid-template-columns: 1fr;

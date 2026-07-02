@@ -456,15 +456,26 @@ function renderSpecs() {
   });
 }
 
+const FEATURE_EMOJIS = [
+  '⚡','💡','🔆','🔅','✨','💫','🌟','⭐','🕯️','🌙',
+  '🎨','🛠️','💎','📐','🏆','🎯','🏠','🌿','🍃','🌸',
+  '🌺','♻️','🎁','🔌','🌈','🖤','🔶','🔮','🎭','🔋'
+];
+
 function renderFeatures() {
   const container = document.getElementById('featuresList');
   if (!container) return;
   container.innerHTML = productFeatures.map((feat, i) => `
-    <div class="dynamic-item feature-item">
-      <input type="text" placeholder="☀" value="${escAttr(feat.icon || '')}" data-feat="${i}" data-field="icon" class="icon-input">
-      <input type="text" placeholder="Título" value="${escAttr(feat.titulo || '')}" data-feat="${i}" data-field="titulo">
-      <input type="text" placeholder="Descripción corta" value="${escAttr(feat.texto || '')}" data-feat="${i}" data-field="texto">
-      <button type="button" class="remove-btn" data-feat="${i}">✕</button>
+    <div class="feature-item-wrap">
+      <div class="dynamic-item feature-item">
+        <input type="text" placeholder="💡" value="${escAttr(feat.icon || '')}" data-feat="${i}" data-field="icon" class="icon-input">
+        <input type="text" placeholder="Título" value="${escAttr(feat.titulo || '')}" data-feat="${i}" data-field="titulo">
+        <input type="text" placeholder="Descripción corta" value="${escAttr(feat.texto || '')}" data-feat="${i}" data-field="texto">
+        <button type="button" class="remove-btn" data-feat="${i}">✕</button>
+      </div>
+      <div class="emoji-row">
+        ${FEATURE_EMOJIS.map(e => `<button type="button" class="emoji-opt${feat.icon === e ? ' selected' : ''}" data-feat="${i}" data-emoji="${e}">${e}</button>`).join('')}
+      </div>
     </div>`).join('');
 
   container.querySelectorAll('input').forEach(input => {
@@ -474,6 +485,17 @@ function renderFeatures() {
   });
   container.querySelectorAll('.remove-btn').forEach(btn => {
     btn.addEventListener('click', () => { productFeatures.splice(Number(btn.dataset.feat), 1); renderFeatures(); });
+  });
+  container.querySelectorAll('.emoji-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = Number(btn.dataset.feat);
+      const emoji = btn.dataset.emoji;
+      productFeatures[idx].icon = emoji;
+      const iconInput = container.querySelector(`input[data-feat="${idx}"][data-field="icon"]`);
+      if (iconInput) iconInput.value = emoji;
+      container.querySelectorAll(`.emoji-opt[data-feat="${idx}"]`).forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
   });
 }
 
@@ -500,6 +522,10 @@ function updateDiscountPreview() {
 async function saveProduct() {
   const data = loadAdminData();
   const idValue = document.getElementById('productId').value;
+
+  // Preserve fields not editable in the form from the existing cached product
+  const existing = idValue ? (cachedProducts[idValue] || {}) : {};
+
   const nombre = document.getElementById('productName').value.trim();
   const tagline = document.getElementById('productTagline').value.trim();
   const priceRaw = parseAdminPrice(document.getElementById('productPrice').value);
@@ -565,7 +591,9 @@ async function saveProduct() {
     descLarga,
     specs: productSpecs.filter(s => s[0] || s[1]),
     features: productFeatures.filter(f => f.titulo || f.texto),
-    descripcion: descCorta  // campo legacy para compatibilidad
+    descripcion: descCorta,
+    lampClase: existing.lampClase || '',
+    videos: existing.videos || []
   };
 
   if (!product.id) { alert('El nombre no es válido para generar un ID.'); return; }
@@ -875,9 +903,10 @@ function attachInventoryEvents() {
   });
 
   // File pickers
-  document.getElementById('imagePickerBtn').addEventListener('click', () => {
-    document.getElementById('imageFileInput').click();
-  });
+  const imagePickerBtn = document.getElementById('imagePickerBtn');
+  if (imagePickerBtn) {
+    imagePickerBtn.addEventListener('click', () => document.getElementById('imageFileInput').click());
+  }
   document.getElementById('imageFileInput').addEventListener('change', async event => {
     const file = event.target.files[0];
     if (!file || productImagesList.length >= 3) return;
@@ -1014,23 +1043,30 @@ function deleteUser(username) {
 
 // ── Config ───────────────────────────────────────────────────────
 async function renderConfigSection() {
-  const settings = await fetchSettings();
-  const type = settings['hero_video_type'] || 'local';
-  const src  = settings['hero_video_src']  || 'LUXTOM/veladoresjuntos.mp4';
+  try {
+    const settings = await fetchSettings();
+    const type = settings['hero_video_type'] || 'local';
+    const src  = settings['hero_video_src']  || 'LUXTOM/veladoresjuntos.mp4';
 
-  const typeEl = document.getElementById('configVideoType');
-  if (typeEl) typeEl.value = type;
+    const typeEl       = document.getElementById('configVideoType');
+    const localField   = document.getElementById('configVideoLocalField');
+    const ytField      = document.getElementById('configVideoYoutubeField');
+    if (!typeEl) return;
 
-  if (type === 'youtube') {
-    const idEl = document.getElementById('configVideoId');
-    if (idEl) idEl.value = src;
-    document.getElementById('configVideoLocalField').style.display = 'none';
-    document.getElementById('configVideoYoutubeField').style.display = 'block';
-  } else {
-    const srcEl = document.getElementById('configVideoSrc');
-    if (srcEl) srcEl.value = src;
-    document.getElementById('configVideoLocalField').style.display = 'block';
-    document.getElementById('configVideoYoutubeField').style.display = 'none';
+    typeEl.value = type;
+    if (type === 'youtube') {
+      const idEl = document.getElementById('configVideoId');
+      if (idEl) idEl.value = src;
+      if (localField) localField.style.display = 'none';
+      if (ytField)    ytField.style.display    = 'block';
+    } else {
+      const srcEl = document.getElementById('configVideoSrc');
+      if (srcEl) srcEl.value = src;
+      if (localField) localField.style.display = 'block';
+      if (ytField)    ytField.style.display    = 'none';
+    }
+  } catch(e) {
+    console.error('Error en renderConfigSection:', e);
   }
 }
 
