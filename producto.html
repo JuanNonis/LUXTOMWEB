@@ -256,15 +256,22 @@ function renderProducto(p, productoId) {
     const ytId = p.video.id;
     const orient = p.video.orientacion || '16/9';
     const isVertical = orient === '9/16';
-    const iframeStyle = isVertical
-      ? 'width:min(100%,420px);aspect-ratio:9/16;'
-      : 'width:100%;aspect-ratio:16/9;';
+
+    // Contenedor con el aspect ratio correcto
+    const wrapStyle = isVertical
+      ? 'position:relative;overflow:hidden;border-radius:10px;width:min(100%,380px);aspect-ratio:9/16;'
+      : 'position:relative;overflow:hidden;border-radius:10px;width:100%;aspect-ratio:16/9;';
+
+    // iframe agrandado 160% para que YouTube detecte un viewport grande y sirva 720p+
+    // El recorte (overflow:hidden en el wrapper) oculta el chrome de YouTube
+    const iframeInner = 'position:absolute;top:-25%;left:-25%;width:150%;height:150%;border:none;';
 
     videoEl.innerHTML = `
-      <div class="youtube-facade" data-id="${ytId}" style="${isVertical ? 'max-width:420px;width:100%;aspect-ratio:9/16;' : 'width:100%;aspect-ratio:16/9;'}">
+      <div class="youtube-facade" data-id="${ytId}" style="${wrapStyle}">
         <img src="https://img.youtube.com/vi/${ytId}/maxresdefault.jpg"
              alt="${p.nombre}"
-             onerror="this.src='https://img.youtube.com/vi/${ytId}/hqdefault.jpg'">
+             style="width:100%;height:100%;object-fit:cover;"
+             onerror="this.src='https://img.youtube.com/vi/${ytId}/sddefault.jpg'">
         <button class="youtube-facade__play" aria-label="Reproducir video">
           <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
             <path d="M8 5v14l11-7z"/>
@@ -273,10 +280,13 @@ function renderProducto(p, productoId) {
       </div>`;
 
     videoEl.querySelector('.youtube-facade').addEventListener('click', () => {
-      videoEl.innerHTML = `<iframe
-        src="https://www.youtube.com/embed/${ytId}?autoplay=1&loop=1&playlist=${ytId}&controls=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1"
-        title="${p.nombre}" frameborder="0" style="${iframeStyle}"
-        allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+      videoEl.innerHTML = `
+        <div style="${wrapStyle}">
+          <iframe
+            src="https://www.youtube.com/embed/${ytId}?autoplay=1&loop=1&playlist=${ytId}&controls=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1&fs=0&vq=hd1080"
+            title="${p.nombre}" frameborder="0" style="${iframeInner}"
+            allow="autoplay; encrypted-media; picture-in-picture"></iframe>
+        </div>`;
     });
 
   } else if (p.video.tipo === 'local') {
