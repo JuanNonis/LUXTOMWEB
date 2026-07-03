@@ -1114,8 +1114,44 @@ function attachConfigEvents() {
   if (typeEl) {
     typeEl.addEventListener('change', () => {
       const t = typeEl.value;
-      document.getElementById('configVideoLocalField').style.display  = t === 'local'   ? 'block' : 'none';
-      document.getElementById('configVideoYoutubeField').style.display = t === 'youtube' ? 'block' : 'none';
+      const lf = document.getElementById('configVideoLocalField');
+      const yf = document.getElementById('configVideoYoutubeField');
+      if (lf) lf.style.display = t === 'local'   ? 'block' : 'none';
+      if (yf) yf.style.display = t === 'youtube' ? 'block' : 'none';
+    });
+  }
+
+  // File picker para el hero video
+  const configPickerBtn  = document.getElementById('configVideoPickerBtn');
+  const configFileInput  = document.getElementById('configVideoFileInput');
+  if (configPickerBtn && configFileInput) {
+    configPickerBtn.addEventListener('click', () => configFileInput.click());
+    configFileInput.addEventListener('change', async event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const srcInput = document.getElementById('configVideoSrc');
+      const statusEl = document.getElementById('configVideoStatus');
+      const sizeMB   = (file.size / 1024 / 1024).toFixed(1);
+      configPickerBtn.disabled = true; configPickerBtn.textContent = '⏳';
+      const setStatus = (msg, color) => { if (statusEl) { statusEl.textContent = msg; statusEl.style.color = color || '#8f9cb4'; } };
+      try {
+        let toUpload = file;
+        if (file.size > 10 * 1024 * 1024) {
+          setStatus('⏳ Cargando compresor (solo la primera vez)...');
+          toUpload = await compressVideo(file, pct => setStatus(`⚙ Comprimiendo... ${pct}%`));
+          const outMB = (toUpload.size / 1024 / 1024).toFixed(1);
+          setStatus(`↑ ${sizeMB}MB → ${outMB}MB. Subiendo...`);
+        } else {
+          setStatus(`↑ Subiendo (${sizeMB}MB)...`);
+        }
+        const url = await uploadVideoToStorage('hero', toUpload);
+        if (srcInput) srcInput.value = url;
+        setStatus('✓ Video subido. Guardá la configuración.', '#8dffb0');
+      } catch(err) {
+        setStatus('✗ Error: ' + err.message, '#ff7d7d');
+      }
+      configPickerBtn.disabled = false; configPickerBtn.textContent = '📁';
+      event.target.value = '';
     });
   }
 
@@ -1127,16 +1163,14 @@ function attachConfigEvents() {
       const src  = type === 'youtube'
         ? document.getElementById('configVideoId').value.trim()
         : document.getElementById('configVideoSrc').value.trim();
-
       const statusEl = document.getElementById('configSaveStatus');
       if (statusEl) { statusEl.textContent = 'Guardando...'; statusEl.style.color = '#8f9cb4'; }
-
       try {
         await saveSettingToSupabase('hero_video_type', type);
         await saveSettingToSupabase('hero_video_src', src);
-        if (statusEl) { statusEl.textContent = '✓ Guardado. El cambio se verá la próxima vez que se cargue el inicio.'; statusEl.style.color = '#8dffb0'; }
+        if (statusEl) { statusEl.textContent = '✓ Guardado. Se aplica la próxima vez que se carga el inicio.'; statusEl.style.color = '#8dffb0'; }
       } catch (err) {
-        if (statusEl) { statusEl.textContent = '✗ Error al guardar: ' + err.message; statusEl.style.color = '#ff7d7d'; }
+        if (statusEl) { statusEl.textContent = '✗ Error: ' + err.message; statusEl.style.color = '#ff7d7d'; }
       }
     });
   }

@@ -290,7 +290,6 @@
         </div>
       </div>
     </section>
-  </main>
 
     <section id="configSection" class="admin-panel">
       <div class="admin-panel-header">
@@ -305,7 +304,7 @@
         <div class="inventory-card-header">
           <div>
             <h2>Video del hero (inicio)</h2>
-            <p>El video que aparece como fondo en la pantalla principal de la web.</p>
+            <p>El video de fondo de la pantalla principal. Se comprime automáticamente antes de subir.</p>
           </div>
         </div>
         <form id="configHeroForm" class="admin-form" style="max-width:560px;">
@@ -316,11 +315,18 @@
             </select>
           </label>
           <div id="configVideoLocalField">
-            <label>Ruta del archivo .mp4<input type="text" id="configVideoSrc" placeholder="LUXTOM/veladoresjuntos.mp4"></label>
+            <label>Archivo de video
+              <div class="file-input-row">
+                <input type="text" id="configVideoSrc" placeholder="Seleccioná el archivo con 📁" readonly>
+                <button type="button" class="file-picker-btn" id="configVideoPickerBtn">📁</button>
+                <input type="file" id="configVideoFileInput" accept="video/*" style="display:none">
+              </div>
+            </label>
+            <p id="configVideoStatus" style="font-size:12px;color:#8f9cb4;margin:2px 0 0;min-height:18px;"></p>
           </div>
           <div id="configVideoYoutubeField" style="display:none">
             <label>ID de YouTube<input type="text" id="configVideoId" placeholder="dQw4w9WgXcQ"></label>
-            <p style="font-size:12px;color:#8f9cb4;margin:0;">Copiá solo el ID del video (lo que va después de <code>?v=</code>).</p>
+            <p style="font-size:12px;color:#8f9cb4;margin:0;">Solo el ID (lo que va después de <code>?v=</code>).</p>
           </div>
           <div class="admin-form-actions">
             <button type="submit" class="btn-primary">Guardar configuración</button>
@@ -329,6 +335,8 @@
         </form>
       </div>
     </section>
+
+  </main>
 
   <div class="order-detail-modal hidden" id="orderDetailModal">
     <div class="order-detail-panel" id="orderDetailContent"></div>
