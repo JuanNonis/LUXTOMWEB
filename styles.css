@@ -1019,10 +1019,9 @@ section { padding: clamp(60px, 8vw, 110px) clamp(20px, 6vw, 80px); }
 }
 .product-video__wrapper iframe {
   display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
   flex-shrink: 0;
   border: none;
+  border-radius: 10px;
 }
 .product-video__placeholder {
   display: flex;

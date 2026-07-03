@@ -554,7 +554,8 @@ async function saveProduct() {
     if (src) video = { tipo: 'local', src, poster: poster || undefined };
   } else if (videoType === 'youtube') {
     const id = document.getElementById('productVideoId').value.trim();
-    if (id) video = { tipo: 'youtube', id };
+    const orient = document.getElementById('productVideoOrient').value || '16/9';
+    if (id) video = { tipo: 'youtube', id, orientacion: orient };
   }
 
   const descCorta = document.getElementById('productDescCorta').value.trim();
@@ -633,6 +634,8 @@ function resetProductForm() {
   document.getElementById('productVideoSrc').value = '';
   document.getElementById('productVideoPoster').value = '';
   document.getElementById('productVideoId').value = '';
+  const orientEl = document.getElementById('productVideoOrient');
+  if (orientEl) orientEl.value = '16/9';
   document.getElementById('productDescCorta').value = '';
   document.getElementById('productDescLarga').value = '';
   productSpecs = [];
@@ -737,6 +740,8 @@ function editProduct(productId) {
     videoLocal.style.display = 'none';
     videoYt.style.display = 'block';
     document.getElementById('productVideoId').value = video.id || '';
+    const orientEl = document.getElementById('productVideoOrient');
+    if (orientEl) orientEl.value = video.orientacion || '16/9';
   } else {
     videoTypeEl.value = '';
     videoLocal.style.display = 'none';
