@@ -162,13 +162,14 @@
               </label>
               <div id="videoLocalFields" style="display:none">
                 <label>
-                  Ruta del video (.mp4)
+                  Video (.mp4) — se comprime automáticamente a 720p
                   <div class="file-input-row">
-                    <input type="text" id="productVideoSrc" placeholder="LUXTOM/videos/clip.mp4">
+                    <input type="text" id="productVideoSrc" placeholder="Seleccioná el archivo con 📁">
                     <button type="button" class="file-picker-btn" id="videoPickerBtn">📁</button>
                     <input type="file" id="videoFileInput" accept="video/*" style="display:none">
                   </div>
                 </label>
+                <p id="videoUploadStatus" style="font-size:12px;color:#8f9cb4;margin:2px 0 8px;min-height:18px;"></p>
                 <label>
                   Portada del video (imagen previa)
                   <div class="file-input-row">

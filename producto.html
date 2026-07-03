@@ -290,20 +290,18 @@ function renderProducto(p, productoId) {
     });
 
   } else if (p.video.tipo === 'local') {
-    // Crea el video y salta al segundo 1 para mostrar un fotograma como preview automático
     const vid = document.createElement('video');
-    vid.controls = true;
-    vid.preload = 'metadata';
-
+    vid.autoplay  = true;
+    vid.muted     = true;
+    vid.loop      = true;
+    vid.playsInline = true;
+    vid.controls  = true;
+    vid.preload   = 'auto';
+    vid.style.cssText = 'display:block;width:100%;max-height:72vh;border-radius:10px;';
     const source = document.createElement('source');
-    source.src = p.video.src;
+    source.src  = p.video.src;
     source.type = 'video/mp4';
     vid.appendChild(source);
-
-    vid.addEventListener('loadedmetadata', () => {
-      vid.currentTime = 1;
-    });
-
     videoEl.appendChild(vid);
   }
 

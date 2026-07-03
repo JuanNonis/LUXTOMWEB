@@ -393,6 +393,68 @@ async function updateOrderStatusInSupabase(orderId, nextStatus) {
   return true;
 }
 
+// ── Compresor de video (FFmpeg.wasm, carga lazy) ─────────────────
+let _ffmpegProgressCb = null;
+let _ffmpegInstance   = null;
+
+async function ensureFFmpeg() {
+  if (_ffmpegInstance && _ffmpegInstance.isLoaded()) return _ffmpegInstance;
+  if (!window.FFmpeg) {
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js';
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('No se pudo cargar el compresor'));
+      document.head.appendChild(s);
+    });
+  }
+  const { createFFmpeg } = FFmpeg;
+  _ffmpegInstance = createFFmpeg({
+    corePath: 'https://unpkg.com/@ffmpeg/core-st@0.11.0/dist/ffmpeg-core.js',
+    log: false,
+    progress: ({ ratio }) => { if (_ffmpegProgressCb) _ffmpegProgressCb(Math.round(ratio * 100)); }
+  });
+  await _ffmpegInstance.load();
+  return _ffmpegInstance;
+}
+
+async function compressVideo(file, onProgress) {
+  _ffmpegProgressCb = onProgress || null;
+  const ffmpeg = await ensureFFmpeg();
+  const { fetchFile } = FFmpeg;
+  const ext = (file.name.split('.').pop() || 'mp4').toLowerCase();
+  const inName = `in.${ext}`;
+  ffmpeg.FS('writeFile', inName, await fetchFile(file));
+  await ffmpeg.run(
+    '-i', inName,
+    '-vf', 'scale=-2:min(720\\,ih)',
+    '-c:v', 'libx264',
+    '-crf', '28',
+    '-preset', 'fast',
+    '-c:a', 'aac', '-b:a', '96k',
+    '-movflags', '+faststart',
+    'out.mp4'
+  );
+  const data = ffmpeg.FS('readFile', 'out.mp4');
+  try { ffmpeg.FS('unlink', inName); } catch(e) {}
+  try { ffmpeg.FS('unlink', 'out.mp4'); } catch(e) {}
+  _ffmpegProgressCb = null;
+  return new File([data.buffer], 'video.mp4', { type: 'video/mp4' });
+}
+
+async function uploadVideoToStorage(productId, file) {
+  const client = getSupabaseClient();
+  if (!client) throw new Error('No hay cliente Supabase disponible.');
+  const ext = (file.name.split('.').pop() || 'mp4').toLowerCase();
+  const path = `${productId}/video-${Date.now()}.${ext}`;
+  const { error } = await client.storage
+    .from('productos')
+    .upload(path, file, { upsert: true, contentType: file.type || 'video/mp4' });
+  if (error) throw new Error('Storage: ' + error.message);
+  const { data } = client.storage.from('productos').getPublicUrl(path);
+  return data.publicUrl;
+}
+
 async function fetchSettings() {
   const client = getSupabaseClient();
   if (!client) return {};

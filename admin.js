@@ -936,10 +936,44 @@ function attachInventoryEvents() {
   document.getElementById('videoPickerBtn').addEventListener('click', () => {
     document.getElementById('videoFileInput').click();
   });
-  document.getElementById('videoFileInput').addEventListener('change', event => {
+  document.getElementById('videoFileInput').addEventListener('change', async event => {
     const file = event.target.files[0];
     if (!file) return;
-    document.getElementById('productVideoSrc').value = 'LUXTOM/videos/' + file.name;
+    const btn      = document.getElementById('videoPickerBtn');
+    const srcInput = document.getElementById('productVideoSrc');
+    const statusEl = document.getElementById('videoUploadStatus');
+    const sizeMB   = (file.size / 1024 / 1024).toFixed(1);
+    if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+    if (srcInput) srcInput.value = '';
+    const nombre    = document.getElementById('productName').value.trim();
+    const productId = document.getElementById('productId').value || (nombre ? createProductId(nombre) : `temp-${Date.now()}`);
+    const setStatus = (msg, color) => { if (statusEl) { statusEl.textContent = msg; statusEl.style.color = color || '#8f9cb4'; } };
+    try {
+      let toUpload = file;
+      if (file.size > 10 * 1024 * 1024) {
+        setStatus('⏳ Cargando compresor (solo la primera vez, ~25MB)...');
+        toUpload = await compressVideo(file, pct => setStatus(`⚙ Comprimiendo... ${pct}%`));
+        const outMB = (toUpload.size / 1024 / 1024).toFixed(1);
+        setStatus(`↑ ${sizeMB}MB → ${outMB}MB. Subiendo...`);
+      } else {
+        setStatus(`↑ Subiendo (${sizeMB}MB)...`);
+      }
+      const url = await uploadVideoToStorage(productId, toUpload);
+      if (srcInput) srcInput.value = url;
+      setStatus('✓ Video listo.', '#8dffb0');
+    } catch(err) {
+      console.error('Video upload error:', err);
+      setStatus('Compresor no disponible, subiendo original...', '#ffd966');
+      try {
+        const url = await uploadVideoToStorage(productId, file);
+        if (srcInput) srcInput.value = url;
+        setStatus(`✓ Subido sin comprimir (${sizeMB}MB).`, '#ffd966');
+      } catch(e2) {
+        setStatus('✗ Error: ' + e2.message, '#ff7d7d');
+        if (srcInput) srcInput.value = '';
+      }
+    }
+    if (btn) { btn.disabled = false; btn.textContent = '📁'; }
     event.target.value = '';
   });
 
