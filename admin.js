@@ -1140,22 +1140,31 @@ async function renderConfigSection() {
     const type = settings['hero_video_type'] || 'local';
     const src  = settings['hero_video_src']  || 'LUXTOM/veladoresjuntos.mp4';
 
-    const typeEl       = document.getElementById('configVideoType');
-    const localField   = document.getElementById('configVideoLocalField');
-    const ytField      = document.getElementById('configVideoYoutubeField');
+    const typeEl        = document.getElementById('configVideoType');
+    const localField    = document.getElementById('configVideoLocalField');
+    const ytField       = document.getElementById('configVideoYoutubeField');
+    const streamField   = document.getElementById('configVideoStreamField');
     if (!typeEl) return;
 
     typeEl.value = type;
     if (type === 'youtube') {
       const idEl = document.getElementById('configVideoId');
       if (idEl) idEl.value = src;
-      if (localField) localField.style.display = 'none';
-      if (ytField)    ytField.style.display    = 'block';
+      if (localField)  localField.style.display  = 'none';
+      if (ytField)     ytField.style.display     = 'block';
+      if (streamField) streamField.style.display = 'none';
+    } else if (type === 'stream') {
+      const idEl = document.getElementById('configVideoStreamId');
+      if (idEl) idEl.value = src;
+      if (localField)  localField.style.display  = 'none';
+      if (ytField)     ytField.style.display     = 'none';
+      if (streamField) streamField.style.display = 'block';
     } else {
       const srcEl = document.getElementById('configVideoSrc');
       if (srcEl) srcEl.value = src;
-      if (localField) localField.style.display = 'block';
-      if (ytField)    ytField.style.display    = 'none';
+      if (localField)  localField.style.display  = 'block';
+      if (ytField)     ytField.style.display     = 'none';
+      if (streamField) streamField.style.display = 'none';
     }
   } catch(e) {
     console.error('Error en renderConfigSection:', e);
@@ -1169,14 +1178,16 @@ function attachConfigEvents() {
       const t = typeEl.value;
       const lf = document.getElementById('configVideoLocalField');
       const yf = document.getElementById('configVideoYoutubeField');
+      const sf = document.getElementById('configVideoStreamField');
       if (lf) lf.style.display = t === 'local'   ? 'block' : 'none';
       if (yf) yf.style.display = t === 'youtube' ? 'block' : 'none';
+      if (sf) sf.style.display = t === 'stream'  ? 'block' : 'none';
     });
   }
 
-  // File picker para el hero video
-  const configPickerBtn  = document.getElementById('configVideoPickerBtn');
-  const configFileInput  = document.getElementById('configVideoFileInput');
+  // File picker — hero video local (Supabase Storage)
+  const configPickerBtn = document.getElementById('configVideoPickerBtn');
+  const configFileInput = document.getElementById('configVideoFileInput');
   if (configPickerBtn && configFileInput) {
     configPickerBtn.addEventListener('click', () => configFileInput.click());
     configFileInput.addEventListener('change', async event => {
@@ -1208,14 +1219,44 @@ function attachConfigEvents() {
     });
   }
 
+  // File picker — hero video Cloudflare Stream
+  const configStreamPickerBtn = document.getElementById('configStreamPickerBtn');
+  const configStreamFileInput = document.getElementById('configStreamFileInput');
+  if (configStreamPickerBtn && configStreamFileInput) {
+    configStreamPickerBtn.addEventListener('click', () => configStreamFileInput.click());
+    configStreamFileInput.addEventListener('change', async event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const idField   = document.getElementById('configVideoStreamId');
+      const statusEl  = document.getElementById('configStreamStatus');
+      const setStatus = (msg, color) => { if (statusEl) { statusEl.textContent = msg; statusEl.style.color = color || '#8f9cb4'; } };
+      configStreamPickerBtn.disabled = true; configStreamPickerBtn.textContent = '⏳';
+      setStatus('Preparando subida a Cloudflare Stream...');
+      try {
+        const uid = await uploadToStream(file, pct => setStatus(`Subiendo... ${pct}%`));
+        if (idField) idField.value = uid;
+        setStatus('✓ Video subido. Guardá la configuración.', '#8dffb0');
+      } catch(err) {
+        setStatus('✗ Error: ' + err.message, '#ff7d7d');
+      }
+      configStreamPickerBtn.disabled = false; configStreamPickerBtn.textContent = '📁';
+      event.target.value = '';
+    });
+  }
+
   const form = document.getElementById('configHeroForm');
   if (form) {
     form.addEventListener('submit', async event => {
       event.preventDefault();
       const type = document.getElementById('configVideoType').value;
-      const src  = type === 'youtube'
-        ? document.getElementById('configVideoId').value.trim()
-        : document.getElementById('configVideoSrc').value.trim();
+      let src = '';
+      if (type === 'youtube') {
+        src = document.getElementById('configVideoId').value.trim();
+      } else if (type === 'stream') {
+        src = document.getElementById('configVideoStreamId').value.trim();
+      } else {
+        src = document.getElementById('configVideoSrc').value.trim();
+      }
       const statusEl = document.getElementById('configSaveStatus');
       if (statusEl) { statusEl.textContent = 'Guardando...'; statusEl.style.color = '#8f9cb4'; }
       try {
