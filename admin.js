@@ -556,6 +556,10 @@ async function saveProduct() {
     const id = document.getElementById('productVideoId').value.trim();
     const orient = document.getElementById('productVideoOrient').value || '16/9';
     if (id) video = { tipo: 'youtube', id, orientacion: orient };
+  } else if (videoType === 'stream') {
+    const id = document.getElementById('productVideoStreamId').value.trim();
+    const orient = document.getElementById('productVideoStreamOrient').value || '16/9';
+    if (id) video = { tipo: 'stream', id, orientacion: orient };
   }
 
   const descCorta = document.getElementById('productDescCorta').value.trim();
@@ -662,8 +666,12 @@ function resetProductForm() {
   // Reset video fields
   const videoLocal = document.getElementById('videoLocalFields');
   const videoYt = document.getElementById('videoYoutubeFields');
+  const videoStream = document.getElementById('videoStreamFields');
   if (videoLocal) videoLocal.style.display = 'none';
   if (videoYt) videoYt.style.display = 'none';
+  if (videoStream) videoStream.style.display = 'none';
+  const streamIdEl = document.getElementById('productVideoStreamId');
+  if (streamIdEl) streamIdEl.value = '';
 
   const discountPreview = document.getElementById('discountPreview');
   if (discountPreview) discountPreview.style.display = 'none';
@@ -729,23 +737,36 @@ function editProduct(productId) {
   const videoTypeEl = document.getElementById('productVideoType');
   const videoLocal = document.getElementById('videoLocalFields');
   const videoYt = document.getElementById('videoYoutubeFields');
+  const videoStreamEl = document.getElementById('videoStreamFields');
   if (video && video.tipo === 'local') {
     videoTypeEl.value = 'local';
     videoLocal.style.display = 'block';
     videoYt.style.display = 'none';
+    if (videoStreamEl) videoStreamEl.style.display = 'none';
     document.getElementById('productVideoSrc').value = video.src || '';
     document.getElementById('productVideoPoster').value = video.poster || '';
   } else if (video && video.tipo === 'youtube') {
     videoTypeEl.value = 'youtube';
     videoLocal.style.display = 'none';
     videoYt.style.display = 'block';
+    if (videoStreamEl) videoStreamEl.style.display = 'none';
     document.getElementById('productVideoId').value = video.id || '';
     const orientEl = document.getElementById('productVideoOrient');
     if (orientEl) orientEl.value = video.orientacion || '16/9';
+  } else if (video && video.tipo === 'stream') {
+    videoTypeEl.value = 'stream';
+    videoLocal.style.display = 'none';
+    videoYt.style.display = 'none';
+    if (videoStreamEl) videoStreamEl.style.display = 'block';
+    const streamIdEl = document.getElementById('productVideoStreamId');
+    if (streamIdEl) streamIdEl.value = video.id || '';
+    const streamOrientEl = document.getElementById('productVideoStreamOrient');
+    if (streamOrientEl) streamOrientEl.value = video.orientacion || '16/9';
   } else {
     videoTypeEl.value = '';
     videoLocal.style.display = 'none';
     videoYt.style.display = 'none';
+    if (videoStreamEl) videoStreamEl.style.display = 'none';
   }
 
   // Specs
@@ -905,6 +926,8 @@ function attachInventoryEvents() {
     const tipo = document.getElementById('productVideoType').value;
     document.getElementById('videoLocalFields').style.display = tipo === 'local' ? 'block' : 'none';
     document.getElementById('videoYoutubeFields').style.display = tipo === 'youtube' ? 'block' : 'none';
+    const streamEl = document.getElementById('videoStreamFields');
+    if (streamEl) streamEl.style.display = tipo === 'stream' ? 'block' : 'none';
   });
 
   // File pickers
@@ -976,6 +999,36 @@ function attachInventoryEvents() {
     if (btn) { btn.disabled = false; btn.textContent = '📁'; }
     event.target.value = '';
   });
+
+  // Stream video picker
+  const streamPickerBtn = document.getElementById('streamPickerBtn');
+  if (streamPickerBtn) {
+    streamPickerBtn.addEventListener('click', () => document.getElementById('streamFileInput').click());
+  }
+  const streamFileInput = document.getElementById('streamFileInput');
+  if (streamFileInput) {
+    streamFileInput.addEventListener('change', async event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const statusEl = document.getElementById('streamUploadStatus');
+      const idField   = document.getElementById('productVideoStreamId');
+      const btn       = document.getElementById('streamPickerBtn');
+      const setStatus = (msg, color) => { if (statusEl) { statusEl.textContent = msg; statusEl.style.color = color || '#8f9cb4'; } };
+      if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+      if (idField) idField.value = '';
+      setStatus('Preparando subida a Cloudflare Stream...');
+      try {
+        const uid = await uploadToStream(file, pct => setStatus(`Subiendo... ${pct}%`));
+        if (idField) idField.value = uid;
+        setStatus('✓ Video subido correctamente.', '#8dffb0');
+      } catch (err) {
+        console.error('Stream upload error:', err);
+        setStatus('✗ Error: ' + err.message, '#ff7d7d');
+      }
+      if (btn) { btn.disabled = false; btn.textContent = '📁'; }
+      event.target.value = '';
+    });
+  }
 
   // Specs
   document.getElementById('addSpecBtn').addEventListener('click', () => {
