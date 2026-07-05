@@ -470,43 +470,40 @@ async function saveSettingToSupabase(key, value) {
   if (error) console.error('Error al guardar setting:', error);
 }
 
-async function uploadToStream(file, onProgress) {
-  // Pide una URL de subida de un solo uso a nuestra Pages Function
-  const resp = await fetch('/api/stream-upload', { method: 'POST' });
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => ({}));
-    throw new Error(err.error || 'No se pudo obtener URL de subida');
-  }
-  const { uploadURL, uid } = await resp.json();
+async function uploadToBunny(file, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/bunny-upload');
+    xhr.setRequestHeader('Content-Type', file.type || 'video/mp4');
 
-  // Carga tus-js-client si no está disponible
-  if (!window.tus) {
-    await new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/tus-js-client@3/dist/tus.min.js';
-      s.onload = resolve;
-      s.onerror = () => reject(new Error('No se pudo cargar el cliente de subida'));
-      document.head.appendChild(s);
-    });
-  }
-
-  // Sube el video usando el protocolo TUS (Cloudflare Stream lo requiere)
-  await new Promise((resolve, reject) => {
-    const upload = new tus.Upload(file, {
-      uploadUrl: uploadURL,
-      chunkSize: 50 * 1024 * 1024,
-      retryDelays: [0, 1000, 3000, 5000],
-      metadata: { filename: file.name, filetype: file.type },
-      onProgress(bytesUploaded, bytesTotal) {
-        if (onProgress && bytesTotal) {
-          onProgress(Math.round((bytesUploaded / bytesTotal) * 100));
+    if (onProgress) {
+      xhr.upload.addEventListener('progress', e => {
+        if (e.lengthComputable) {
+          onProgress(Math.round((e.loaded / e.total) * 90));
         }
-      },
-      onSuccess: resolve,
-      onError: reject,
-    });
-    upload.start();
-  });
+      });
+    }
 
-  return uid;
+    xhr.addEventListener('load', () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          if (onProgress) onProgress(100);
+          resolve(data);
+        } catch(e) {
+          reject(new Error('Respuesta inválida del servidor'));
+        }
+      } else {
+        try {
+          const err = JSON.parse(xhr.responseText);
+          reject(new Error(err.error || 'Error del servidor'));
+        } catch(e) {
+          reject(new Error('Error del servidor: ' + xhr.status));
+        }
+      }
+    });
+
+    xhr.addEventListener('error', () => reject(new Error('Error de red')));
+    xhr.send(file);
+  });
 }

@@ -158,7 +158,7 @@
                   <option value="">Sin video</option>
                   <option value="local">Local (.mp4)</option>
                   <option value="youtube">YouTube</option>
-                  <option value="stream">Cloudflare Stream ☁️</option>
+                  <option value="bunny">Bunny Stream 🐰</option>
                 </select>
               </label>
               <div id="videoLocalFields" style="display:none">
@@ -189,18 +189,19 @@
                   </select>
                 </label>
               </div>
-              <div id="videoStreamFields" style="display:none">
+              <div id="videoBunnyFields" style="display:none">
                 <label>
-                  Video — se sube a Cloudflare Stream automáticamente
+                  Video — se sube a Bunny automáticamente
                   <div class="file-input-row">
-                    <input type="text" id="productVideoStreamId" placeholder="ID auto-generado al subir...">
-                    <button type="button" class="file-picker-btn" id="streamPickerBtn">📁</button>
-                    <input type="file" id="streamFileInput" accept="video/*" style="display:none">
+                    <input type="text" id="productVideoBunnyId" placeholder="ID auto-generado al subir...">
+                    <input type="hidden" id="productVideoBunnyLibraryId" value="">
+                    <button type="button" class="file-picker-btn" id="bunnyPickerBtn">📁</button>
+                    <input type="file" id="bunnyFileInput" accept="video/*" style="display:none">
                   </div>
                 </label>
-                <p id="streamUploadStatus" style="font-size:12px;color:#8f9cb4;margin:2px 0 8px;min-height:18px;"></p>
+                <p id="bunnyUploadStatus" style="font-size:12px;color:#8f9cb4;margin:2px 0 8px;min-height:18px;"></p>
                 <label>Orientación del video
-                  <select id="productVideoStreamOrient">
+                  <select id="productVideoBunnyOrient">
                     <option value="16/9">Horizontal (16:9)</option>
                     <option value="9/16">Vertical (9:16)</option>
                   </select>
@@ -330,7 +331,7 @@
             <select id="configVideoType">
               <option value="local">Local (.mp4)</option>
               <option value="youtube">YouTube (autoplay mudo)</option>
-              <option value="stream">Cloudflare Stream ☁️</option>
+              <option value="bunny">Bunny Stream 🐰</option>
             </select>
           </label>
           <div id="configVideoLocalField">
@@ -347,15 +348,15 @@
             <label>ID de YouTube<input type="text" id="configVideoId" placeholder="dQw4w9WgXcQ"></label>
             <p style="font-size:12px;color:#8f9cb4;margin:0;">Solo el ID (lo que va después de <code>?v=</code>).</p>
           </div>
-          <div id="configVideoStreamField" style="display:none">
-            <label>Video — se sube a Cloudflare Stream automáticamente
+          <div id="configVideoBunnyField" style="display:none">
+            <label>Video — se sube a Bunny automáticamente
               <div class="file-input-row">
-                <input type="text" id="configVideoStreamId" placeholder="ID auto-generado al subir...">
-                <button type="button" class="file-picker-btn" id="configStreamPickerBtn">📁</button>
-                <input type="file" id="configStreamFileInput" accept="video/*" style="display:none">
+                <input type="text" id="configVideoBunnyId" placeholder="ID auto-generado al subir...">
+                <button type="button" class="file-picker-btn" id="configBunnyPickerBtn">📁</button>
+                <input type="file" id="configBunnyFileInput" accept="video/*" style="display:none">
               </div>
             </label>
-            <p id="configStreamStatus" style="font-size:12px;color:#8f9cb4;margin:2px 0 0;min-height:18px;"></p>
+            <p id="configBunnyStatus" style="font-size:12px;color:#8f9cb4;margin:2px 0 0;min-height:18px;"></p>
           </div>
           <div class="admin-form-actions">
             <button type="submit" class="btn-primary">Guardar configuración</button>
