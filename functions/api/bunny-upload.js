@@ -10,6 +10,13 @@ export async function onRequestPost(context) {
     });
   }
 
+  // Obtener el CDN hostname de la librería
+  const libResp = await fetch(`https://video.bunnycdn.com/library/${libraryId}`, {
+    headers: { AccessKey: apiKey },
+  });
+  const libData = libResp.ok ? await libResp.json() : {};
+  const cdnHostname = libData.PullZoneName ? libData.PullZoneName + '.b-cdn.net' : 'vz-36bbbc02-b33.b-cdn.net';
+
   // Paso 1: crear entrada de video en Bunny
   const createResp = await fetch(`https://video.bunnycdn.com/library/${libraryId}/videos`, {
     method: 'POST',
@@ -47,7 +54,7 @@ export async function onRequestPost(context) {
     });
   }
 
-  return new Response(JSON.stringify({ videoId: guid, libraryId }), {
+  return new Response(JSON.stringify({ videoId: guid, libraryId, cdnHostname }), {
     headers: { 'Content-Type': 'application/json' },
   });
 }

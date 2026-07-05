@@ -287,22 +287,28 @@ function renderProducto(p, productoId) {
     });
 
   } else if (p.video.tipo === 'bunny') {
-    const videoId   = p.video.id;
-    const libraryId = p.video.libraryId || '697414';
-    const orient    = p.video.orientacion || '16/9';
-    const isVertical = orient === '9/16';
-    const wrapStyle = isVertical
+    const videoId     = p.video.id;
+    const cdnHostname = p.video.cdnHostname || 'vz-36bbbc02-b33.b-cdn.net';
+    const orient      = p.video.orientacion || '16/9';
+    const isVertical  = orient === '9/16';
+    const wrapStyle   = isVertical
       ? 'position:relative;overflow:hidden;border-radius:10px;width:min(100%,380px);aspect-ratio:9/16;'
       : 'position:relative;overflow:hidden;border-radius:10px;width:100%;aspect-ratio:16/9;';
-    videoEl.innerHTML = `
-      <div style="${wrapStyle}">
-        <iframe
-          src="https://iframe.mediadelivery.net/embed/${libraryId}/${videoId}?autoplay=true&loop=true&controls=false&muted=false&preload=true"
-          style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;"
-          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-          allowfullscreen="true">
-        </iframe>
-      </div>`;
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = wrapStyle;
+    const vid = document.createElement('video');
+    vid.loop        = true;
+    vid.playsInline = true;
+    vid.controls    = true;
+    vid.preload     = 'metadata';
+    vid.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;';
+    const src720  = `https://${cdnHostname}/${videoId}/play_720p.mp4`;
+    const srcOrig = `https://${cdnHostname}/${videoId}/original`;
+    const s1 = document.createElement('source'); s1.src = src720;  s1.type = 'video/mp4';
+    const s2 = document.createElement('source'); s2.src = srcOrig; s2.type = 'video/mp4';
+    vid.appendChild(s1); vid.appendChild(s2);
+    wrapper.appendChild(vid);
+    videoEl.appendChild(wrapper);
 
   } else if (p.video.tipo === 'local') {
     const vid = document.createElement('video');

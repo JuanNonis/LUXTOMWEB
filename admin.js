@@ -559,8 +559,9 @@ async function saveProduct() {
   } else if (videoType === 'bunny') {
     const id = document.getElementById('productVideoBunnyId').value.trim();
     const libraryId = document.getElementById('productVideoBunnyLibraryId').value || '697414';
+    const cdnHostname = document.getElementById('productVideoBunnyCdn').value || 'vz-36bbbc02-b33.b-cdn.net';
     const orient = document.getElementById('productVideoBunnyOrient').value || '16/9';
-    if (id) video = { tipo: 'bunny', id, libraryId, orientacion: orient };
+    if (id) video = { tipo: 'bunny', id, libraryId, cdnHostname, orientacion: orient };
   }
 
   const descCorta = document.getElementById('productDescCorta').value.trim();
@@ -765,6 +766,8 @@ function editProduct(productId) {
     if (bunnyIdEl) bunnyIdEl.value = video.id || '';
     const bunnyLibEl = document.getElementById('productVideoBunnyLibraryId');
     if (bunnyLibEl) bunnyLibEl.value = video.libraryId || '697414';
+    const bunnyCdnEl = document.getElementById('productVideoBunnyCdn');
+    if (bunnyCdnEl) bunnyCdnEl.value = video.cdnHostname || 'vz-36bbbc02-b33.b-cdn.net';
     const bunnyOrientEl = document.getElementById('productVideoBunnyOrient');
     if (bunnyOrientEl) bunnyOrientEl.value = video.orientacion || '16/9';
   } else {
@@ -1024,9 +1027,11 @@ function attachInventoryEvents() {
       if (idField) idField.value = '';
       setStatus('Subiendo a Bunny Stream...');
       try {
-        const { videoId, libraryId } = await uploadToBunny(file, pct => setStatus(`Subiendo... ${pct}%`));
+        const { videoId, libraryId, cdnHostname } = await uploadToBunny(file, pct => setStatus(`Subiendo... ${pct}%`));
         if (idField) idField.value = videoId;
         if (libField) libField.value = libraryId;
+        const cdnField = document.getElementById('productVideoBunnyCdn');
+        if (cdnField) cdnField.value = cdnHostname || 'vz-36bbbc02-b33.b-cdn.net';
         setStatus('✓ Video subido correctamente.', '#8dffb0');
       } catch (err) {
         console.error('Bunny upload error:', err);

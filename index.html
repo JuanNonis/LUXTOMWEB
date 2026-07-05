@@ -182,7 +182,7 @@
       if (type === 'youtube') {
         container.innerHTML = `<iframe src="https://www.youtube.com/embed/${src}?autoplay=1&mute=1&loop=1&playlist=${src}&controls=0&rel=0&playsinline=1" frameborder="0" allow="autoplay; encrypted-media" style="width:100%;height:100%;border:none;display:block;" allowfullscreen></iframe>`;
       } else if (type === 'bunny') {
-        container.innerHTML = `<iframe src="https://iframe.mediadelivery.net/embed/697414/${src}?autoplay=true&loop=true&controls=false&muted=true&preload=true" style="width:100%;height:100%;border:none;display:block;" allow="accelerometer; gyroscope; autoplay; encrypted-media;" allowfullscreen></iframe>`;
+        container.innerHTML = `<video autoplay muted loop playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;display:block;"><source src="https://vz-36bbbc02-b33.b-cdn.net/${src}/play_720p.mp4" type="video/mp4"><source src="https://vz-36bbbc02-b33.b-cdn.net/${src}/original" type="video/mp4"></video>`;
       } else {
         const vid = document.getElementById('heroVideo');
         if (vid && vid.getAttribute('src') !== src) { vid.setAttribute('src', src); vid.load(); }
