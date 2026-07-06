@@ -44,7 +44,7 @@
     </p>
     <div class="hero__actions">
       <a href="#sobre-nosotros" class="btn-ghost">
-        Nuestra historia
+        Nuestra Filosofía &rarr;
       </a>
       <a href="shop.html" class="btn-primary">
         Ver colección &rarr;
@@ -66,7 +66,7 @@
       <div class="stat__label">Clientes felices</div>
     </div>
     <div class="stat">
-      <div class="stat__num">6</div>
+      <div class="stat__num" id="productCount">—</div>
       <div class="stat__label">Modelos únicos y mas por venir</div>
     </div>
     <div class="stat">
@@ -136,7 +136,7 @@
     </div>
   </div>
   <div class="footer__bottom">
-    <p>&copy; 2025 LUXTOM. Todos los derechos reservados.</p>
+    <p>&copy; 2024 LUXTOM. Todos los derechos reservados.</p>
     <p style="color: var(--muted); font-size:11px; letter-spacing:0.08em;">DISEÑO · LUZ · AMBIENTE</p>
   </div>
 </footer>
@@ -154,8 +154,11 @@
 
   const featuredGrid = document.getElementById('featuredGrid');
   getProductos().then(productos => {
-    const featured = Object.entries(productos).filter(([, p]) => p.featured);
+    const entries = Object.entries(productos);
+    const featured = entries.filter(([, p]) => p.featured);
     featuredGrid.innerHTML = featured.map(([id, p]) => renderCard(id, p)).join('');
+    const countEl = document.getElementById('productCount');
+    if (countEl) countEl.textContent = entries.length;
   });
 
   const scrollTopBtn = document.getElementById('scrollTopBtn');
