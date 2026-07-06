@@ -176,12 +176,21 @@ async function renderBoard() {
       card.className = 'order-card';
       card.draggable = true;
       card.dataset.orderId = order.id;
+      const isDelivered = status === 'pedido entregado';
       card.innerHTML = `
         <div><h4>${order.cliente}</h4><small>${order.id} · ${order.fecha}</small></div>
         <div class="order-meta"><span><strong>Total:</strong> ${order.total}</span></div>
         <div class="order-products"><strong>Productos:</strong>
           <ul>${order.productos.map(item => `<li>${item.cantidad} × ${renderProductName(item)}</li>`).join('')}</ul>
-        </div>`;
+        </div>
+        ${isDelivered ? `<button class="order-delete-btn" data-order-id="${order.id}">🗑 Eliminar</button>` : ''}`;
+
+      card.querySelector('.order-delete-btn')?.addEventListener('click', async e => {
+        e.stopPropagation();
+        if (!confirm(`¿Eliminar el pedido de ${order.cliente}? Esta acción no se puede deshacer.`)) return;
+        await deleteOrderFromSupabase(order.id);
+        await renderBoard();
+      });
 
       card.addEventListener('dragstart', event => {
         event.dataTransfer.setData('text/plain', order.id);

@@ -393,6 +393,17 @@ async function updateOrderStatusInSupabase(orderId, nextStatus) {
   return true;
 }
 
+async function deleteOrderFromSupabase(orderId) {
+  const client = getSupabaseClient();
+  if (!client) return null;
+  const { error } = await client.from('orders').delete().eq('id', orderId);
+  if (error) {
+    console.error('Error al eliminar pedido en Supabase:', error);
+    return null;
+  }
+  return true;
+}
+
 // ── Compresor de video (FFmpeg.wasm, carga lazy) ─────────────────
 let _ffmpegProgressCb = null;
 let _ffmpegInstance   = null;

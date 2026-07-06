@@ -399,6 +399,54 @@ section { padding: clamp(60px, 8vw, 110px) clamp(20px, 6vw, 80px); }
   display: none !important;
 }
 
+/* ─── WHATSAPP FLOATING BUTTON ────────────────────────────── */
+.whatsapp-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 74px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #25d366;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+  z-index: 200;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+}
+
+.whatsapp-fab:hover {
+  transform: translateY(-2px) scale(1.07);
+  box-shadow: 0 8px 28px rgba(37,211,102,0.55);
+}
+
+.whatsapp-fab svg {
+  width: 28px;
+  height: 28px;
+  fill: #fff;
+}
+
+/* ─── ADMIN ORDER DELETE BUTTON ───────────────────────────── */
+.order-delete-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 7px 0;
+  border: 1px solid rgba(255,80,80,0.35);
+  border-radius: 8px;
+  background: rgba(255,80,80,0.07);
+  color: #ff7d7d;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background 0.2s;
+}
+.order-delete-btn:hover {
+  background: rgba(255,80,80,0.18);
+}
+
 .scroll-top {
   position: fixed;
   right: 20px;
