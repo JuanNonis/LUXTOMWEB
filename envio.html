@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MÃ©todo de envÃ­o â€” LUXTOM</title>
+  <title>Método de envío — LUXTOM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -17,9 +17,9 @@
     <li><a href="index.html">Inicio</a></li>
     <li><a href="index.html#contacto">Contacto</a></li>
     <li><a href="cart.html" class="nav__cart-link">Carrito <span class="cart-badge" id="navCartCount">0</span></a></li>
-    <li><a href="shop.html" class="nav__cta">Ver colecciÃ³n</a></li>
+    <li><a href="shop.html" class="nav__cta">Ver colección</a></li>
   </ul>
-  <button class="nav__burger" id="burger" aria-label="MenÃº">
+  <button class="nav__burger" id="burger" aria-label="Menú">
     <span></span><span></span><span></span>
   </button>
 </nav>
@@ -28,22 +28,27 @@
 <div class="checkout-steps-wrapper">
   <div class="checkout-steps">
     <div class="checkout-step done">
-      <div class="checkout-step__num">âœ“</div>
+      <div class="checkout-step__num">✓</div>
       <span class="checkout-step__label">Carrito</span>
     </div>
     <div class="checkout-step__bar done"></div>
     <div class="checkout-step done">
-      <div class="checkout-step__num">âœ“</div>
+      <div class="checkout-step__num">✓</div>
       <span class="checkout-step__label">Datos</span>
     </div>
     <div class="checkout-step__bar done"></div>
     <div class="checkout-step active">
       <div class="checkout-step__num">3</div>
-      <span class="checkout-step__label">EnvÃ­o</span>
+      <span class="checkout-step__label">Envío</span>
     </div>
     <div class="checkout-step__bar"></div>
     <div class="checkout-step">
       <div class="checkout-step__num">4</div>
+      <span class="checkout-step__label">Confirmar</span>
+    </div>
+    <div class="checkout-step__bar"></div>
+    <div class="checkout-step">
+      <div class="checkout-step__num">5</div>
       <span class="checkout-step__label">Pago</span>
     </div>
   </div>
@@ -53,8 +58,8 @@
   <div class="shipping-layout">
 
     <section class="form-card">
-      <h2>ElegÃ­ tu mÃ©todo de envÃ­o</h2>
-      <p style="color:var(--muted);font-size:14px;margin-top:-8px;">Entregamos a todo el paÃ­s. SeleccionÃ¡ la opciÃ³n que mÃ¡s te convenga.</p>
+      <h2>Elegí tu método de envío</h2>
+      <p style="color:var(--muted);font-size:14px;margin-top:-8px;">Entregamos a todo el país. Seleccioná la opción que más te convenga.</p>
 
       <div class="shipping-options" id="shippingOptions">
 
@@ -62,10 +67,10 @@
         <label class="shipping-option">
           <input type="radio" name="shipping" value="retiro" id="optRetiro">
           <div class="shipping-option__card">
-            <div class="shipping-option__icon">ðŸ </div>
+            <div class="shipping-option__icon">🏠</div>
             <div class="shipping-option__info">
               <strong>Retiro en nuestro taller</strong>
-              <p>PasÃ¡s a buscar tu pedido. Coordinamos dÃ­a y horario por WhatsApp.</p>
+              <p>Pasás a buscar tu pedido. Coordinamos día y horario por WhatsApp.</p>
             </div>
             <div class="shipping-option__price">
               <span class="price">Gratis</span>
@@ -78,14 +83,14 @@
         <label class="shipping-option">
           <input type="radio" name="shipping" value="andreani" id="optAndreani">
           <div class="shipping-option__card">
-            <div class="shipping-option__icon">ðŸ“¦</div>
+            <div class="shipping-option__icon">📦</div>
             <div class="shipping-option__info">
               <strong>Correo</strong>
-              <p>EnvÃ­o a todo el paÃ­s. Seguimiento online incluido.</p>
+              <p>Envío a todo el país. Seguimiento online incluido.</p>
             </div>
             <div class="shipping-option__price">
               <span class="price">A coordinar</span>
-              <span class="eta">3â€“5 dÃ­as hÃ¡biles</span>
+              <span class="eta">3–5 días hábiles</span>
             </div>
           </div>
         </label>
@@ -94,13 +99,13 @@
         <label class="shipping-option">
           <input type="radio" name="shipping" value="didi" id="optDidi">
           <div class="shipping-option__card">
-            <div class="shipping-option__icon">ðŸš—</div>
+            <div class="shipping-option__icon">🚗</div>
             <div class="shipping-option__info">
-              <strong>Didi Auto â€” Mismo dÃ­a</strong>
-              <p>Disponible en CABA y GBA. El paquete llega el mismo dÃ­a en horas.</p>
+              <strong>Didi Auto — Mismo día</strong>
+              <p>Disponible en CABA y GBA. El paquete llega el mismo día en horas.</p>
             </div>
             <div class="shipping-option__price">
-              <span class="price">5kâ€“15k</span>
+              <span class="price">5k–15k</span>
               <span class="eta">Hoy</span>
             </div>
           </div>
@@ -109,13 +114,13 @@
       </div>
 
       <p style="color:var(--muted);font-size:12px;line-height:1.6;margin-top:12px;">
-        IMPORTANTE: los envÃ­os se coordinan con nosotros a travÃ©s de WhatsApp luego de confirmar el pedido.
+        IMPORTANTE: los envíos se coordinan con nosotros a través de WhatsApp luego de confirmar el pedido.
       </p>
 
-      <p id="shippingError" style="color:#e07070;font-size:13px;display:none;margin-top:4px;">SeleccionÃ¡ un mÃ©todo de envÃ­o para continuar.</p>
+      <p id="shippingError" style="color:#e07070;font-size:13px;display:none;margin-top:4px;">Seleccioná un método de envío para continuar.</p>
 
       <button id="continueBtn" class="btn-primary btn-full" style="margin-top:16px;border:none;cursor:pointer;">
-        Continuar al pago â†’
+        Continuar →
       </button>
     </section>
 
@@ -129,7 +134,7 @@
           <span>Subtotal</span>
           <span id="miniTotal">$0</span>
         </div>
-        <a href="datos-cliente.html" class="btn-ghost" style="text-align:center;justify-content:center;">â† Editar datos</a>
+        <a href="datos-cliente.html" class="btn-ghost" style="text-align:center;justify-content:center;">← Editar datos</a>
       </div>
     </aside>
 
@@ -140,10 +145,10 @@
   <div class="footer__inner">
     <div class="footer__brand">
       <a href="index.html" class="nav__logo">LUXTOM</a>
-      <p>Veladores de diseÃ±o exclusivo. Cada pieza pensada para transformar tu espacio con luz y estilo.</p>
+      <p>Veladores de diseño exclusivo. Cada pieza pensada para transformar tu espacio con luz y estilo.</p>
     </div>
     <div class="footer__col">
-      <h4>NavegaciÃ³n</h4>
+      <h4>Navegación</h4>
       <ul>
         <li><a href="index.html">Inicio</a></li>
         <li><a href="shop.html">Shop</a></li>
@@ -160,7 +165,7 @@
   </div>
   <div class="footer__bottom">
     <p>&copy; 2025 LUXTOM. Todos los derechos reservados.</p>
-    <p style="color:var(--muted);font-size:11px;letter-spacing:0.08em;">DISEÃ‘O Â· LUZ Â· AMBIENTE</p>
+    <p style="color:var(--muted);font-size:11px;letter-spacing:0.08em;">DISEÑO · LUZ · AMBIENTE</p>
   </div>
 </footer>
 
@@ -200,7 +205,7 @@
       const price = parsePrice(item.producto.precioDescuento || item.producto.precio);
       return `<div class="mini-summary__item">
         <strong>${item.producto.nombre}</strong>
-        <span>${item.qty} Ã— ${formatPrice(price)}</span>
+        <span>${item.qty} × ${formatPrice(price)}</span>
       </div>`;
     }).join('');
 
@@ -208,9 +213,9 @@
   }
 
   function getShippingPayload(method) {
-    if (method === 'retiro')   return { method: 'retiro',   label: 'Retiro en taller',      precio: 0,    plazo: 'A coordinar',    pendiente: false };
-    if (method === 'andreani') return { method: 'andreani', label: 'Correo',                 precio: null, plazo: '3â€“5 dÃ­as hÃ¡biles', pendiente: true  };
-    if (method === 'didi')     return { method: 'didi',     label: 'Didi Auto â€“ Mismo dÃ­a',  precio: null, plazo: 'Hoy',             pendiente: true  };
+    if (method === 'retiro')   return { method: 'retiro',   label: 'Retiro en taller',       precio: 0,    plazo: 'A coordinar',      pendiente: false };
+    if (method === 'andreani') return { method: 'andreani', label: 'Correo',                  precio: null, plazo: '3–5 días hábiles',  pendiente: true  };
+    if (method === 'didi')     return { method: 'didi',     label: 'Didi Auto — Mismo día',   precio: null, plazo: 'Hoy',              pendiente: true  };
     return null;
   }
 
@@ -227,4 +232,3 @@
 </script>
 </body>
 </html>
-

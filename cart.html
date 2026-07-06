@@ -117,6 +117,8 @@
 
 <button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">↑</button>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
 <script src="productos.js"></script>
 <script src="carrito.js"></script>
 <script>
@@ -129,6 +131,9 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
+
+  // Cargar productos desde Supabase para que las imágenes estén disponibles
+  getProductos().then(() => renderCartPage());
 </script>
 </body>
 </html>
