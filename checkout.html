@@ -280,15 +280,17 @@
   }
 
   window.addEventListener('DOMContentLoaded', () => {
-    const customer = loadData(CUSTOMER_KEY);
-    const items    = cartItems();
-    if (!customer || !customer.nombre) { window.location.href = 'datos-cliente.html'; return; }
-    if (!items.length) { window.location.href = 'cart.html'; return; }
+    getProductos().then(() => {
+      const customer = loadData(CUSTOMER_KEY);
+      const items    = cartItems();
+      if (!customer || !customer.nombre) { window.location.href = 'datos-cliente.html'; return; }
+      if (!items.length) { window.location.href = 'cart.html'; return; }
 
-    renderCustomerSummary();
-    renderShippingSummary();
-    renderCheckoutItems();
-    renderGrandTotal();
+      renderCustomerSummary();
+      renderShippingSummary();
+      renderCheckoutItems();
+      renderGrandTotal();
+    });
   });
 
   // ─── CONFIRMAR PEDIDO ────────────────────────────────────────────
