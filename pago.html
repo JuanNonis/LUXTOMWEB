@@ -54,6 +54,14 @@
   </div>
 </div>
 
+<section class="page-hero">
+  <div class="page-hero__inner">
+    <span class="section-label">✦ ¡Pedido confirmado!</span>
+    <h1 class="section-title">¡Gracias por tu compra!</h1>
+    <p class="section-sub">Tu pedido fue registrado con éxito. Ahora realizá la transferencia y avisanos por WhatsApp.</p>
+  </div>
+</section>
+
 <main class="cart-page checkout-page">
   <div class="cart-layout">
     <section class="checkout-details">
@@ -273,7 +281,7 @@
         const url = await uploadComprobanteToStorage(lastOrder.id, file);
         if (proofUploadText)  proofUploadText.textContent = file.name;
         if (proofUploadLabel) { proofUploadLabel.classList.remove('uploading'); proofUploadLabel.classList.add('has-file'); }
-        if (uploadStatus)     { uploadStatus.textContent = '✓ Comprobante guardado.'; uploadStatus.style.color = '#25d366'; }
+        if (uploadStatus)     { uploadStatus.textContent = '✓ El comprobante ya fue cargado a tu pedido.'; uploadStatus.style.color = '#25d366'; }
         if (proofPreview)     proofPreview.innerHTML = `<img src="${url}" alt="Comprobante" style="max-width:100%;border-radius:14px;border:1px solid rgba(255,255,255,0.08);margin-top:12px;">`;
         proofInput.value = '';
       } catch (err) {
