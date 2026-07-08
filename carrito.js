@@ -302,4 +302,4 @@ window.setCartQuantity = setCartQuantity;
 window.removeCartItem = removeCartItem;
 window.setupProductPageCart = setupProductPageCart;
 
-window.addEventListener('DOMContentLoaded', initCartUI);
+window.addEventListener('DOMContentLoaded', () => getProductos().then(initCartUI));

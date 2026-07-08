@@ -185,6 +185,8 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
 <script src="productos.js"></script>
 <script src="carrito.js"></script>
 <script>
@@ -195,20 +197,21 @@
 
   // Pre-fill if the user already filled data before
   window.addEventListener('DOMContentLoaded', () => {
-    const saved = (() => { try { return JSON.parse(localStorage.getItem(CUSTOMER_KEY)) || {}; } catch { return {}; } })();
-    if (saved.nombre)    document.getElementById('inputNombre').value    = saved.nombre;
-    if (saved.apellido)  document.getElementById('inputApellido').value  = saved.apellido;
-    if (saved.telefono)  document.getElementById('inputTelefono').value  = saved.telefono;
-    if (saved.mail)      document.getElementById('inputMail').value      = saved.mail;
-    if (saved.direccion) document.getElementById('inputDireccion').value = saved.direccion;
-    if (saved.ciudad)    document.getElementById('inputCiudad').value    = saved.ciudad;
-    if (saved.provincia) document.getElementById('inputProvincia').value = saved.provincia;
-    if (saved.cp)        document.getElementById('inputCP').value        = saved.cp;
+    getProductos().then(() => {
+      const saved = (() => { try { return JSON.parse(localStorage.getItem(CUSTOMER_KEY)) || {}; } catch { return {}; } })();
+      if (saved.nombre)    document.getElementById('inputNombre').value    = saved.nombre;
+      if (saved.apellido)  document.getElementById('inputApellido').value  = saved.apellido;
+      if (saved.telefono)  document.getElementById('inputTelefono').value  = saved.telefono;
+      if (saved.mail)      document.getElementById('inputMail').value      = saved.mail;
+      if (saved.direccion) document.getElementById('inputDireccion').value = saved.direccion;
+      if (saved.ciudad)    document.getElementById('inputCiudad').value    = saved.ciudad;
+      if (saved.provincia) document.getElementById('inputProvincia').value = saved.provincia;
+      if (saved.cp)        document.getElementById('inputCP').value        = saved.cp;
 
-    renderMiniSummary();
+      renderMiniSummary();
 
-    // If cart is empty, redirect back
-    if (!cartItems().length) window.location.href = 'cart.html';
+      if (!cartItems().length) window.location.href = 'cart.html';
+    });
   });
 
   function renderMiniSummary() {

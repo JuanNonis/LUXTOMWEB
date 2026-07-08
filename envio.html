@@ -169,6 +169,8 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
 <script src="productos.js"></script>
 <script src="carrito.js"></script>
 <script>
@@ -179,20 +181,22 @@
     document.getElementById('navLinks').classList.toggle('open'));
 
   window.addEventListener('DOMContentLoaded', () => {
-    const customer = (() => { try { return JSON.parse(localStorage.getItem(CUSTOMER_KEY)) || null; } catch { return null; } })();
-    if (!customer || !customer.nombre) { window.location.href = 'datos-cliente.html'; return; }
-    if (!cartItems().length) { window.location.href = 'cart.html'; return; }
+    getProductos().then(() => {
+      const customer = (() => { try { return JSON.parse(localStorage.getItem(CUSTOMER_KEY)) || null; } catch { return null; } })();
+      if (!customer || !customer.nombre) { window.location.href = 'datos-cliente.html'; return; }
+      if (!cartItems().length) { window.location.href = 'cart.html'; return; }
 
-    renderMiniSummary();
+      renderMiniSummary();
 
-    // Restore previous selection if user navigated back
-    try {
-      const saved = JSON.parse(localStorage.getItem(SHIPPING_KEY));
-      if (saved && saved.method) {
-        const radio = document.querySelector(`input[name="shipping"][value="${saved.method}"]`);
-        if (radio) radio.checked = true;
-      }
-    } catch { /* ignore */ }
+      // Restore previous selection if user navigated back
+      try {
+        const saved = JSON.parse(localStorage.getItem(SHIPPING_KEY));
+        if (saved && saved.method) {
+          const radio = document.querySelector(`input[name="shipping"][value="${saved.method}"]`);
+          if (radio) radio.checked = true;
+        }
+      } catch { /* ignore */ }
+    });
   });
 
   function renderMiniSummary() {
