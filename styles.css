@@ -877,6 +877,7 @@ section { padding: clamp(60px, 8vw, 110px) clamp(20px, 6vw, 80px); }
     min-height: 100svh;
     background: linear-gradient(to bottom, rgba(8,8,8,0.55) 0%, rgba(8,8,8,0.22) 45%, rgba(8,8,8,0.55) 100%);
   }
+  .hero__subtitle { margin-top: auto; }
   .hero__actions { flex-direction: column; align-items: flex-start; gap: 12px; }
   .brand-strip { grid-template-columns: 1fr; }
   .footer__inner { grid-template-columns: 1fr 1fr; }
