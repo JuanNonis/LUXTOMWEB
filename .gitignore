@@ -1,6 +1,9 @@
 *.jpg
-*.mp4
 *.png
 *.jpeg
 *.mp3
 *.zip
+# Raw footage (no subir)
+LUXTOM/2026*.mp4
+LUXTOM/WhatsApp*.mp4
+LUXTOM/PairDrop_files_*/
