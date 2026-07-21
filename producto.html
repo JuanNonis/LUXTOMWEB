@@ -306,7 +306,18 @@ function renderProducto(p, productoId) {
             playsinline: 1, fs: 0, iv_load_policy: 3, modestbranding: 1,
           },
           events: {
-            onReady: e => { try { e.target.setPlaybackQuality('hd1080'); } catch(_){} e.target.playVideo(); },
+            onReady: e => {
+              try { e.target.setPlaybackQuality('hd1080'); } catch(_){}
+              e.target.playVideo();
+              // Cubre el branding inicial de YouTube (título + logo duran ~2s)
+              const startCover = document.createElement('div');
+              startCover.style.cssText = 'position:absolute;inset:0;z-index:5;background:#111;transition:opacity 0.5s;pointer-events:none;';
+              wrapper.appendChild(startCover);
+              setTimeout(() => {
+                startCover.style.opacity = '0';
+                setTimeout(() => startCover.remove(), 600);
+              }, 2800);
+            },
             onStateChange: e => {
               if (e.data === YT.PlayerState.ENDED) { player.seekTo(0); player.playVideo(); }
             }
