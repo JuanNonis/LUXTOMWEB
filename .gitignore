@@ -3,7 +3,8 @@
 *.jpeg
 *.mp3
 *.zip
-# Raw footage (no subir)
+# Raw footage y videos grandes (no subir)
 LUXTOM/2026*.mp4
 LUXTOM/WhatsApp*.mp4
 LUXTOM/PairDrop_files_*/
+LUXTOM/videos terminados/
