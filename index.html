@@ -173,6 +173,24 @@
   }
 </script>
 <script>
+  (async () => {
+    const client = globalThis.supabase || null;
+    if (!client) return;
+    try {
+      const { data } = await client.from('settings').select('*');
+      if (!data || !data.length) return;
+      const s = data.reduce((acc, r) => { acc[r.key] = r.value; return acc; }, {});
+      const src = s['hero_video_src'];
+      if (!src) return;
+      // Solo acepta URLs de Supabase o rutas relativas web (nunca rutas de Windows)
+      const isValid = src.startsWith('http') || /^[A-Za-z0-9_\-]+\/[^\\]+\.mp4$/.test(src);
+      if (!isValid) return;
+      const vid = document.getElementById('heroVideo');
+      if (vid && vid.getAttribute('src') !== src) { vid.src = src; vid.load(); }
+    } catch(e) {}
+  })();
+</script>
+<script>
   // Ajusta el contenedor del video para que su altura coincida con la altura del texto
   (function(){
     const content = document.querySelector('.hero__content');
