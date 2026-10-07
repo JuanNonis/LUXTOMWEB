@@ -1,0 +1,25 @@
+# Supabase free plan pauses the project after 7 days without database activity.
+# This queries the products table every 2 days so the project never goes idle.
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: '0 12 */2 * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query products table
+        env:
+          SUPABASE_URL: https://benrpugnnnrlopflishl.supabase.co
+          SUPABASE_KEY: sb_publishable_j5kC-b1_3pTClKnN0Bou8Q_-GX-reDA
+        run: |
+          status=$(curl -s -o response.txt -w "%{http_code}" \
+            "$SUPABASE_URL/rest/v1/products?select=id&limit=1" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_KEY")
+          echo "HTTP $status"
+          cat response.txt
+          test "$status" = "200"
