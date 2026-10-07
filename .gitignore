@@ -1,4 +1,6 @@
 *.jpg
+# Fotos del hero (respaldo si el video no carga)
+!img/*.jpg
 *.png
 *.jpeg
 *.mp3

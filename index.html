@@ -6,14 +6,15 @@
   <title>LUXTOM — Veladores de Diseño</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="stylesheet" href="styles.css">
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 
 <!-- ─── NAVBAR ─────────────────────────────────── -->
-<nav class="nav">
+<nav class="nav nav--over" id="mainNav">
   <a href="index.html" class="nav__logo">LUXTOM</a>
 
   <ul class="nav__links" id="navLinks">
@@ -29,77 +30,163 @@
 
 
 <!-- ─── HERO ───────────────────────────────────── -->
-<section class="hero">
-  <div class="hero__bg"></div>
-  <div class="hero__glow"></div>
+<section class="hero" id="hero" aria-roledescription="carrusel">
+  <!-- Cada diapositiva: video (con su foto de respaldo) o imagen -->
+  <div class="hero__slides">
+    <div class="hero__slide hero__slide--cuatro is-active" data-layout="a">
+      <video class="hero__media" muted loop playsinline preload="auto" poster="img/hero-cuatro.jpg"
+             data-src="img/hero-cuatro.webm" aria-label="Cuatro veladores LUXTOM encendidos"></video>
+    </div>
+    <div class="hero__slide hero__slide--duo" data-layout="a">
+      <video class="hero__media" muted loop playsinline preload="none" poster="img/hero-veladores.webp"
+             data-src="img/hero-duo.webm" aria-label="Dos veladores LUXTOM encendidos"></video>
+    </div>
+  </div>
+  <div class="hero__shade"></div>
 
-  <div class="hero__content">
-    <span class="hero__eyebrow">✦ Iluminación de diseño exclusivo</span>
-    <h1 class="hero__title">
-      Luz que<br>
-      <em>transforma</em><br>
-      espacios
-    </h1>
-    <p class="hero__subtitle">
-      Veladores diseño original que fusionan estética y función. Cada pieza diseñada para crear atmósferas únicas en tu hogar.
-    </p>
-    <div class="hero__actions">
-      <a href="#sobre-nosotros" class="btn-ghost">
-        Nuestra Filosofía &rarr;
-      </a>
-      <a href="shop.html" class="btn-primary">
-        Ver colección &rarr;
-      </a>
+  <div class="hero__inner">
+    <div class="hero__content">
+      <span class="hero__eyebrow">✦ Iluminación de diseño exclusivo</span>
+      <h1 class="hero__title">
+        Luz que<br>
+        <em>transforma</em><br>
+        espacios
+      </h1>
+      <p class="hero__subtitle">
+        Veladores de diseño original que fusionan estética y función. Cada pieza diseñada para crear atmósferas únicas en tu hogar.
+      </p>
+      <div class="hero__actions">
+        <a href="shop.html" class="btn-primary">Ver colección &rarr;</a>
+        <a href="#sobre-nosotros" class="btn-ghost">Nuestra filosofía</a>
+      </div>
+      <ul class="hero__tags">
+        <li>Diseño propio</li>
+        <li>Impreso en 3D</li>
+        <li>Luz LED cálida</li>
+      </ul>
     </div>
   </div>
 
-  <div class="hero__visual" aria-hidden="true" id="heroVideoContainer">
-    <video id="heroVideo" autoplay muted loop playsinline preload="metadata" src="LUXTOM/veladoresjuntos.mp4"></video>
+  <div class="hero__dots" role="tablist" aria-label="Elegir imagen del inicio">
+    <button type="button" class="hero__dot is-active" role="tab" aria-selected="true" aria-label="Imagen 1"></button>
+    <button type="button" class="hero__dot" role="tab" aria-selected="false" aria-label="Imagen 2"></button>
   </div>
 </section>
+<script>
+  // Hero en carrusel: rota solo cada INTERVALO ms, en loop, y se puede elegir con los circulitos.
+  // Cada video tiene su foto de respaldo (poster): si el video no se puede reproducir, queda la foto.
+  (function () {
+    const INTERVALO = 8000;
+    const hero = document.getElementById('hero');
+    const slides = [...hero.querySelectorAll('.hero__slide')];
+    const dots = [...hero.querySelectorAll('.hero__dot')];
+    const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Video → foto si falla o si el navegador no reproduce webm
+    slides.forEach(slide => {
+      const video = slide.querySelector('video');
+      if (!video) return;
+      const usarFoto = () => {
+        const img = document.createElement('img');
+        img.className = 'hero__media';
+        img.src = video.poster;
+        img.alt = video.getAttribute('aria-label') || '';
+        video.replaceWith(img);
+      };
+      if (sinMovimiento || !video.canPlayType('video/webm')) { usarFoto(); return; }
+      video.addEventListener('error', usarFoto);
+      video.src = video.dataset.src;
+    });
+
+    let actual = 0, timer = null;
+
+    function mostrar(i) {
+      const anterior = slides[actual];
+      actual = (i + slides.length) % slides.length;
+      const slide = slides[actual];
+
+      anterior.querySelector('video')?.pause();
+      const video = slide.querySelector('video');
+      if (video) { video.currentTime = 0; video.play().catch(() => {}); }
+
+      slides.forEach((s, k) => s.classList.toggle('is-active', k === actual));
+      dots.forEach((d, k) => {
+        d.classList.toggle('is-active', k === actual);
+        d.setAttribute('aria-selected', k === actual ? 'true' : 'false');
+      });
+    }
+
+    function programar() {
+      clearInterval(timer);
+      if (!sinMovimiento) timer = setInterval(() => mostrar(actual + 1), INTERVALO);
+    }
+
+    dots.forEach((d, k) => d.addEventListener('click', () => { mostrar(k); programar(); }));
+    // Al volver a la pestaña, el video de la diapositiva actual sigue reproduciéndose
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) slides[actual].querySelector('video')?.play().catch(() => {});
+    });
+    slides[0].querySelector('video')?.play().catch(() => {});
+    programar();
+  })();
+</script>
+
+
+<!-- ─── MARQUEE ────────────────────────────────── -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">
+    <span>Veladores ✦ <i>diseño propio</i> ✦ Impresión 3D ✦ <i>luz cálida</i> ✦</span>
+    <span>Veladores ✦ <i>diseño propio</i> ✦ Impresión 3D ✦ <i>luz cálida</i> ✦</span>
+  </div>
+</div>
 
 
 <!-- ─── BRAND STRIP ────────────────────────────── -->
-<div class="brand-strip">
-  <div class="brand-strip__stats">
-    <div class="stat">
-      <div class="stat__num">+10</div>
-      <div class="stat__label">Clientes felices</div>
+<div class="brand-strip reveal">
+  <div class="values">
+    <div class="value">
+      <span class="value__icon" aria-hidden="true">✦</span>
+      <h3 class="value__title">Diseño propio</h3>
+      <p class="value__text">Cada modelo es original de LUXTOM. No vas a encontrarlo en otro lado.</p>
     </div>
-    <div class="stat">
-      <div class="stat__num" id="productCount">—</div>
-      <div class="stat__label">Modelos únicos y mas por venir</div>
+    <div class="value">
+      <span class="value__icon" aria-hidden="true">◇</span>
+      <h3 class="value__title">Impreso en 3D</h3>
+      <p class="value__text">Fabricado pieza por pieza, con texturas imposibles de lograr de otra forma.</p>
     </div>
-    <div class="stat">
-      <div class="stat__num">100%</div>
-      <div class="stat__label">Diseño propio</div>
+    <div class="value">
+      <span class="value__icon" aria-hidden="true">☀</span>
+      <h3 class="value__title">Luz que abriga</h3>
+      <p class="value__text">La pantalla difumina la luz y crea un ambiente cálido y relajante.</p>
     </div>
-    <div class="stat">
-      <div class="stat__num">2</div>
-      <div class="stat__label">Años de experiencia en el rubro</div>
+    <div class="value">
+      <span class="value__icon" aria-hidden="true">◎</span>
+      <h3 class="value__title">Atención directa</h3>
+      <p class="value__text">Te asesoramos por WhatsApp antes y después de tu compra.</p>
     </div>
   </div>
 </div>
 
 
 <!-- ─── FEATURED PRODUCTS ─────────────────────── -->
-<section class="featured">
-  <div class="featured__header">
+<section class="featured" id="destacados">
+  <div class="featured__header reveal">
     <div>
       <span class="section-label">✦ Destacados</span>
-      <h2 class="section-title">Nuestros favoritos</h2>
+      <h2 class="section-title">Nuestros <em>favoritos</em></h2>
       <p class="section-sub">Piezas seleccionadas que combinan diseño y calidez lumínica.</p>
     </div>
+    <a href="shop.html" class="link-arrow">Ver toda la colección &rarr;</a>
   </div>
 
-  <div class="products-grid" id="featuredGrid"></div>
+  <div class="products-grid reveal" id="featuredGrid"></div>
 </section>
 
 
 <!-- ─── AMBIENT / QUOTE ────────────────────────── -->
 <section class="ambient" id="sobre-nosotros">
   <div class="ambient__bg-glow"></div>
-  <div class="ambient__inner">
+  <div class="ambient__inner reveal">
     <span class="section-label" style="display:block;margin-bottom:20px;">✦ Nuestra filosofía</span>
     <p class="ambient__quote">
       "La iluminación correcta no alumbra<br>
@@ -153,8 +240,16 @@
 <script src="productos.js"></script>
 <script src="carrito.js"></script>
 <script>
-  document.getElementById('burger').addEventListener('click', () =>
-    document.getElementById('navLinks').classList.toggle('open'));
+  const mainNav = document.getElementById('mainNav');
+  document.getElementById('burger').addEventListener('click', () => {
+    const open = document.getElementById('navLinks').classList.toggle('open');
+    mainNav.classList.toggle('menu-open', open);
+  });
+
+  // Navbar transparente sobre el hero; sólida al bajar
+  const updateNav = () => mainNav.classList.toggle('is-scrolled', window.scrollY > 40);
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
 
   const featuredGrid = document.getElementById('featuredGrid');
   getProductos().then(productos => {
@@ -165,48 +260,20 @@
     if (countEl) countEl.textContent = entries.length;
   });
 
+  // Aparición suave de secciones
+  const revealObserver = new IntersectionObserver(items => {
+    items.forEach(it => {
+      if (it.isIntersecting) { it.target.classList.add('is-in'); revealObserver.unobserve(it.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
   const scrollTopBtn = document.getElementById('scrollTopBtn');
   if (scrollTopBtn) {
     scrollTopBtn.addEventListener('click', () => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
-</script>
-<script>
-  (async () => {
-    const client = globalThis.supabase || null;
-    if (!client) return;
-    try {
-      const { data } = await client.from('settings').select('*');
-      if (!data || !data.length) return;
-      const s = data.reduce((acc, r) => { acc[r.key] = r.value; return acc; }, {});
-      const src = s['hero_video_src'];
-      if (!src) return;
-      // Solo acepta URLs de Supabase o rutas relativas web (nunca rutas de Windows)
-      const isValid = src.startsWith('http') || /^[A-Za-z0-9_\-]+\/[^\\]+\.mp4$/.test(src);
-      if (!isValid) return;
-      const vid = document.getElementById('heroVideo');
-      if (vid && vid.getAttribute('src') !== src) { vid.src = src; vid.load(); }
-    } catch(e) {}
-  })();
-</script>
-<script>
-  // Ajusta el contenedor del video para que su altura coincida con la altura del texto
-  (function(){
-    const content = document.querySelector('.hero__content');
-    const visual = document.querySelector('.hero__visual');
-    if(!content || !visual) return;
-    function fitVideoContainer(){
-      const target = Math.max(content.offsetHeight, 240);
-      visual.style.height = target + 'px';
-      const vid = visual.querySelector('video');
-      if(vid){ vid.style.height = '100%'; vid.style.width = 'auto'; }
-    }
-    const vid = visual.querySelector('video');
-    if(vid){ vid.addEventListener('loadedmetadata', fitVideoContainer); }
-    window.addEventListener('resize', fitVideoContainer);
-    setTimeout(fitVideoContainer, 120);
-  })();
 </script>
 </body>
 </html>
