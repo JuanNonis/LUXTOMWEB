@@ -181,7 +181,7 @@
     </div>
   </div>
   <div class="footer__bottom">
-    <p>&copy; 2025 LUXTOM. Todos los derechos reservados.</p>
+    <p>&copy; 2026 LUXTOM. Todos los derechos reservados.</p>
     <p style="color:var(--muted);font-size:11px;letter-spacing:0.08em;">DISEÑO · LUZ · AMBIENTE</p>
   </div>
 </footer>
@@ -251,8 +251,30 @@
 
     const errorEl = document.getElementById('formError');
 
-    if (!nombre || !apellido || !telefono || !mail || !direccion || !ciudad || !provincia || !cp) {
+    const showError = msg => {
+      errorEl.textContent = msg;
       errorEl.style.display = 'block';
+    };
+
+    if (!nombre || !apellido || !telefono || !mail || !direccion || !ciudad || !provincia || !cp) {
+      showError('Por favor completá todos los campos antes de continuar.');
+      return;
+    }
+
+    // Teléfono: solo números, espacios, +, - y paréntesis, con al menos 8 dígitos
+    const digitos = telefono.replace(/\D/g, '');
+    if (!/^[0-9+\-\s()]+$/.test(telefono) || digitos.length < 8 || digitos.length > 15) {
+      showError('Revisá el teléfono: ingresá solo números, con código de área (ej: 11 1234-5678).');
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) {
+      showError('Revisá el email: debe tener el formato tu@email.com.');
+      return;
+    }
+
+    if (!/^[0-9A-Za-z]{4,8}$/.test(cp)) {
+      showError('Revisá el código postal (ej: 1425 o C1425ABC).');
       return;
     }
 

@@ -3,6 +3,13 @@ const SUPPORT_WHATSAPP_NUMBER = '5491173689423';
 const CHECKOUT_CVU = '0000000000000000000000';
 const CHECKOUT_ALIAS = 'luxtom.pago';
 const CHECKOUT_BANK = 'Banco LUXTOM';
+const MAX_QTY = 20;
+
+// Cantidad válida: entero entre 1 y MAX_QTY
+function clampQty(value) {
+  const n = Math.floor(Number(value)) || 1;
+  return Math.min(MAX_QTY, Math.max(1, n));
+}
 
 function parsePrice(value) {
   return Number(String(value).replace(/[^0-9]/g, '')) || 0;
@@ -28,14 +35,15 @@ function saveCart(cart) {
 }
 
 function cartItemCount(cart = getCart()) {
-  return Object.values(cart).reduce((sum, qty) => sum + Math.max(0, Number(qty)), 0);
+  return Object.values(cart).reduce((sum, qty) => sum + (Number(qty) > 0 ? clampQty(qty) : 0), 0);
 }
 
 function cartItems(cart = getCart()) {
   const _p = window._productosCache || PRODUCTOS;
   return Object.entries(cart)
-    .map(([id, qty]) => ({ id, qty: Number(qty), producto: _p[id] }))
-    .filter(item => item.producto && item.qty > 0);
+    .filter(([, qty]) => Number(qty) > 0)
+    .map(([id, qty]) => ({ id, qty: clampQty(qty), producto: _p[id] }))
+    .filter(item => item.producto);
 }
 
 function cartSubtotal(cart = getCart()) {
@@ -59,21 +67,25 @@ function addToCart(id, amount = 1) {
   if (!producto) return;
 
   const cart = getCart();
-  const current = Math.max(0, Number(cart[id] || 0));
-  cart[id] = current + Number(amount);
+  const current = Math.max(0, Math.floor(Number(cart[id]) || 0));
+  const wanted = current + Math.floor(Number(amount) || 0);
 
-  if (cart[id] <= 0) {
+  if (wanted <= 0) {
     delete cart[id];
+    saveCart(cart);
+    return;
   }
 
+  cart[id] = clampQty(wanted);
   saveCart(cart);
-  showCartNotification(`${producto.nombre} agregado al carrito (${cart[id]} unidad${cart[id] === 1 ? '' : 'es'})`);
+  const capped = wanted > MAX_QTY ? ` — máximo ${MAX_QTY} por producto` : '';
+  showCartNotification(`${producto.nombre} agregado al carrito (${cart[id]} unidad${cart[id] === 1 ? '' : 'es'})${capped}`);
 }
 
 function setCartQuantity(id, amount) {
   const cart = getCart();
-  if (amount > 0) {
-    cart[id] = amount;
+  if (Number(amount) > 0) {
+    cart[id] = clampQty(amount);
   } else {
     delete cart[id];
   }
@@ -178,7 +190,7 @@ function renderCartPage() {
           </div>
           <div class="cart-item__qty">
             <button type="button" class="qty-button" data-action="decrease" data-id="${item.id}">-</button>
-            <input type="number" min="1" value="${item.qty}" data-id="${item.id}">
+            <input type="number" min="1" max="${MAX_QTY}" step="1" value="${item.qty}" data-id="${item.id}">
             <button type="button" class="qty-button" data-action="increase" data-id="${item.id}">+</button>
           </div>
         </div>
@@ -189,16 +201,15 @@ function renderCartPage() {
     button.addEventListener('click', () => {
       const id = button.dataset.id;
       const action = button.dataset.action;
-      const current = Number(getCart()[id] || 1);
-      const next = action === 'increase' ? current + 1 : Math.max(1, current - 1);
-      setCartQuantity(id, next);
+      const current = clampQty(getCart()[id]);
+      setCartQuantity(id, clampQty(action === 'increase' ? current + 1 : current - 1));
     });
   });
 
   itemsContainer.querySelectorAll('.cart-item__content input[type="number"]').forEach(input => {
     input.addEventListener('change', () => {
       const id = input.dataset.id;
-      const next = Math.max(1, Number(input.value) || 1);
+      const next = clampQty(input.value);
       input.value = next;
       setCartQuantity(id, next);
     });
@@ -275,14 +286,18 @@ function setupProductPageCart(productId) {
   const addBtn = document.getElementById('js-add-cart');
   if (!qtyInput || !addBtn) return;
 
+  qtyInput.max = MAX_QTY;
+  qtyInput.step = 1;
+  qtyInput.addEventListener('change', () => { qtyInput.value = clampQty(qtyInput.value); });
+
   addBtn.addEventListener('click', () => {
-    const qty = Math.max(1, Number(qtyInput.value) || 1);
+    const qty = clampQty(qtyInput.value);
+    qtyInput.value = qty;
     addToCart(productId, qty);
   });
 
   const changeQty = (amount) => {
-    const current = Math.max(1, Number(qtyInput.value) || 1);
-    qtyInput.value = Math.max(1, current + amount);
+    qtyInput.value = clampQty(clampQty(qtyInput.value) + amount);
   };
 
   const decrease = document.getElementById('js-qty-decrease');
@@ -302,4 +317,19 @@ window.setCartQuantity = setCartQuantity;
 window.removeCartItem = removeCartItem;
 window.setupProductPageCart = setupProductPageCart;
 
-window.addEventListener('DOMContentLoaded', () => getProductos().then(initCartUI));
+// Cierra el menú mobile al tocar un enlace (si no, queda abierto tapando la página)
+function setupNavAutoClose() {
+  const navLinks = document.getElementById('navLinks');
+  if (!navLinks) return;
+  navLinks.addEventListener('click', e => {
+    if (!e.target.closest('a')) return;
+    navLinks.classList.remove('open');
+    const mainNav = document.getElementById('mainNav');
+    if (mainNav) mainNav.classList.remove('menu-open');
+  });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  setupNavAutoClose();
+  getProductos().then(initCartUI);
+});
